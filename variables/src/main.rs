@@ -1,9 +1,12 @@
+use std::io::{self, Write};
+
 fn main() {
     assign();
     shadow();
     operations();
     tuple();
     array();
+    array_overrun();
 }
 
 fn assign() {
@@ -82,4 +85,29 @@ fn array() {
     let a2: [i32; 5] = [1, 2, 3, 4, 5];
     let _first = a2[0];
     let _second = a2[1];
+}
+
+fn array_overrun() {
+    let a = [1, 2, 3, 4, 5];
+
+    loop {
+        print!("Please enter a valid array index: ");
+        io::stdout().flush().expect("failed to wipe before flush?");
+        
+        let mut index = String::new();
+
+        io::stdin()
+            .read_line(&mut index)
+            .expect("Failed to read line");
+
+        let index: usize = match index.trim().parse(){
+                Ok(num) => num,
+                Err(_) => continue,
+            };
+
+        let element = a[index];
+    
+        println!("The value of the element at index {index} is: {element}");
+        break;
+    }
 }
