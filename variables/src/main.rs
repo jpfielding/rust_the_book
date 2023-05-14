@@ -3,6 +3,7 @@ fn main() {
     shadow();
     operations();
     tuple();
+    array();
 }
 
 fn assign() {
@@ -54,5 +55,31 @@ fn tuple() {
 
     let (x, y, z) = tup;
 
+    println!("The value of x is: {x}");
     println!("The value of y is: {y}");
+    println!("The value of z is: {z}");
+}
+fn array() {
+    let a = [1, 2, 3, 4, 5];
+    println!("The value of a is: {:?}", a);
+
+    let months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+    ];
+    println!("The value of months is: {:?}", months);
+
+    let a2: [i32; 5] = [1, 2, 3, 4, 5];
+    let _first = a2[0];
+    let _second = a2[1];
 }
