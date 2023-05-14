@@ -1,9 +1,6 @@
-[package]
-name = "rust_the_book"
-version = "0.1.0"
-authors = ["JP <jp.fielding@gmail.com>"]
-edition = "2018"
+[workspace]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
+members = [
+    "hello_world",
+    "guessing_game",
+]
