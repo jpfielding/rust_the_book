@@ -7,6 +7,7 @@ fn main() {
     tuple();
     array();
     array_overrun();
+    parameters();
 }
 
 fn assign() {
@@ -111,3 +112,10 @@ fn array_overrun() {
         break;
     }
 }
+fn parameters() {
+    let print_labeled_measurement = |value: i32, unit_label: char| {
+        println!("The measurement is: {value}{unit_label}");
+    };
+    print_labeled_measurement(5, 'h');
+}
+
