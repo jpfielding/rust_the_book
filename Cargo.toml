@@ -4,5 +4,5 @@ members = [
     "hello_world",
     "guessing_game",
     "variables",
-    "cheat_sheet",
+    "top_5_traits",
 ]
