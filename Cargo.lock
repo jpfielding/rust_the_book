@@ -20,17 +20,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "guessing_game"
-version = "0.1.0"
-dependencies = [
- "rand",
-]
-
-[[package]]
-name = "hello_world"
-version = "0.1.0"
-
-[[package]]
 name = "itoa"
 version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -97,6 +86,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "rb_1_2_hello_world"
+version = "0.1.0"
+
+[[package]]
+name = "rb_2_0_guessing_game"
+version = "0.1.0"
+dependencies = [
+ "rand",
+]
+
+[[package]]
+name = "rb_3_1_variables"
+version = "0.1.0"
+
+[[package]]
 name = "ryu"
 version = "1.0.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -157,10 +161,6 @@ name = "unicode-ident"
 version = "1.0.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e5464a87b239f13a63a501f2701565754bae92d243d4bb7eb12f6d57d2269bf4"
-
-[[package]]
-name = "variables"
-version = "0.1.0"
 
 [[package]]
 name = "wasi"
