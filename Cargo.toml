@@ -4,5 +4,6 @@ members = [
     "rb_1_2_hello_world",
     "rb_2_0_guessing_game",
     "rb_3_1_variables",
+    "rb_3_2_data_types",
     "top_5_traits",
 ]
