@@ -11,6 +11,9 @@
 		"vscode": {
 			"extensions": [
 				"rust-lang.rust-analyzer",
+				"Github.copilot", 
+				"Github.copilot-chat", 
+				"Github.copilot-labs",
 				"ms-vscode.cpptools"
 			]
 		}
