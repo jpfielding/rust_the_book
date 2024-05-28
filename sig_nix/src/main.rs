@@ -1,3 +1,4 @@
+// https://blog.logrocket.com/guide-signal-handling-rust/
 use libc::{sigaddset, sigemptyset, sigprocmask, SIGINT, SIG_BLOCK, SIG_UNBLOCK};
 use std::thread;
 use std::time::Duration;
