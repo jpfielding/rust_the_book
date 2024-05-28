@@ -6,4 +6,6 @@ members = [
     "rb_3_1_variables",
     "rb_3_2_data_types",
     "top_5_traits",
+    "sig_tokio",
+    "sig_nix"
 ]
