@@ -17,29 +17,37 @@
 				"ms-vscode.cpptools"
 			]
 		}
-	}
+	},
 
-	// Use 'mounts' to make the cargo cache persistent in a Docker Volume.
-	// "mounts": [
-	// 	{
-	// 		"source": "devcontainer-cargo-cache-${devcontainerId}",
-	// 		"target": "/usr/local/cargo",
-	// 		"type": "volume"
-	// 	}
-	// ]
-
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
-
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "rustc --version",
-
-	// Configure tool-specific properties.
-	// "customizations": {},
-
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+	"mounts": [
+		{
+			"type": "bind",
+			"source": "${localEnv:HOME}/.gitconfig",
+			"target": "/home/vscode/.gitconfig"
+		},
+		{
+			"type": "bind",
+			"source": "${localEnv:HOME}/.git-credentials",
+			"target": "/home/vscode/.git-credentials"
+		},
+		{ 
+			"type": "bind",
+			"source": "${localEnv:HOME}/.ssh",
+			"target": "/home/vscode/.ssh"
+		},
+		{
+			"type": "bind",
+			"source": "${localEnv:HOME}/.bash_history_${localWorkspaceFolderBasename}",
+			"target": "/home/vscode/.bash_history"
+		}
+	  ],
+	  "workspaceMount": "source=${localWorkspaceFolder},target=/workdir/${localWorkspaceFolderBasename},type=bind,consistency=cached", 
+	  "workspaceFolder": "/workdir/${localWorkspaceFolderBasename}",
+	  "initializeCommand": {
+		"ssh dir":     "mkdir -p ${localEnv:HOME}/.ssh",
+		"gitconfig": "touch ${localEnv:HOME}/.gitconfig",
+		"git creds": "touch ${localEnv:HOME}/.git-credentials",
+		"bash history": "touch ${localEnv:HOME}/.bash_history_${localWorkspaceFolderBasename}"
+	  },
+	  "forwardPorts": []
 }
