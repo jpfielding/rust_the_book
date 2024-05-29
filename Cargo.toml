@@ -8,5 +8,6 @@ members = [
     "top_5_traits",
     "sig_tokio",
     "sig_nix",
-    "trie"
+    "trie",
+    "web_server"
 ]
