@@ -15,6 +15,10 @@
 				"Github.copilot-chat", 
 				"Github.copilot-labs",
 				"ms-vscode.cpptools"
+				"ms-vscode.cpptools",
+				"GitHub.copilot",
+				"GitHub.copilot-chat",
+				"GitHub.copilot-labs"
 			]
 		}
 	},
