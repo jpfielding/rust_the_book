@@ -34,16 +34,16 @@ ENV HOME "/home/${USERNAME}"
 ENV SDK_HOME ${HOME}/sdk
 ENV PATH ${HOME}/bin:${PATH}
 
-# zig
-ENV VERSION "0.13.0"
-ENV PATH ${GOPATH}/bin:${HOME}/sdk/zig:${PATH}
+# rust
+ENV VERSION ""
+ENV PATH ${HOME}/.cargo/bin:${PATH}
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y
+
+# pretty bash
+COPY --chown=${USERNAME}:${USERNAME} .bash_pretty ${HOME}/.bash_rust
 RUN set -eux && \
-    export ARCH="$(arch | sed 's/aarch64/aarch64/' | sed 's/x86_64/x86_64/')" && \
-    cd /tmp && mkdir -p ${SDK_HOME} && \
-    curl -o zig.tar.xz -L https://ziglang.org/download/${VERSION}/zig-linux-${ARCH}-${VERSION}.tar.xz && \
-    tar xf zig.tar.xz && mv zig-linux-${ARCH}-${VERSION} ${SDK_HOME} && rm /tmp/zig.tar.xz && \
-    cd ${SDK_HOME} && ln -s zig-linux-${ARCH}-${VERSION} zig
-   
+    echo "source ${HOME}/.bash_rust" >> ${HOME}/.bashrc
+
 # pretty bash
 COPY --chown=${USERNAME}:${USERNAME} .bash_pretty ${HOME}/.bash_pretty
 RUN set -eux && \
