@@ -1,8 +1,13 @@
 {
-	"image": "mcr.microsoft.com/devcontainers/universal:2",
-	"features": {
-		"ghcr.io/devcontainers/features/rust:1": {},
-	},
+	"name": "rust-play",
+	"build": { 
+		"dockerfile": "./Dockerfile",
+		"context": ".",
+		"target": "user",
+		"args": {
+		  "USERNAME": "${localEnv:USER:play}"
+		}  
+	},  
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -10,5 +15,42 @@
 				"ms-vscode.cpptools"
 			]
 		}
-	}
-}
+	},
+    "mounts": [
+		{
+		  "type": "bind",
+		  "source": "${localEnv:HOME}/.gitconfig",
+		  "target": "/home/${localEnv:USER:play}/.gitconfig"
+		},
+		{
+		  "type": "bind",
+		  "source": "${localEnv:HOME}/.git-credentials",
+		  "target": "/home/${localEnv:USER:play}/.git-credentials"
+		},
+		{
+		  "type": "bind",
+		  "source": "${localEnv:HOME}/.netrc",
+		  "target": "/home/${localEnv:USER:play}/.netrc"
+		},
+		{ 
+		  "type": "bind",
+		  "source": "${localEnv:HOME}/.ssh",
+		  "target": "/home/${localEnv:USER:play}/.ssh"
+		},
+		{
+		  "type": "bind",
+		  "source": "${localEnv:HOME}/.bash_history_${localWorkspaceFolderBasename}",
+		  "target": "/home/${localEnv:USER:play}/.bash_history"
+		}
+		],
+	  "workspaceMount": "source=${localWorkspaceFolder},target=/workdir/${localWorkspaceFolderBasename},type=bind,consistency=cached", 
+	  "workspaceFolder": "/workdir/${localWorkspaceFolderBasename}",
+	  "initializeCommand": {
+		"netrc":      "touch ${localEnv:HOME}/.netrc",
+		"ssh dir":    "mkdir -p ${localEnv:HOME}/.ssh",
+		"gitconfig":  "touch ${localEnv:HOME}/.gitconfig",
+		"git creds":  "touch ${localEnv:HOME}/.git-credentials",
+		"bash history": "touch ${localEnv:HOME}/.bash_history_${localWorkspaceFolderBasename}"
+	  },
+	  "forwardPorts": []
+  }
