@@ -34,10 +34,22 @@ ENV HOME "/home/${USERNAME}"
 ENV SDK_HOME ${HOME}/sdk
 ENV PATH ${HOME}/bin:${PATH}
 
+RUN mkdir -p ${HOME}/bin
+    
 # rust
-ENV VERSION ""
 ENV PATH ${HOME}/.cargo/bin:${PATH}
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y
+
+# gh
+RUN set -eux && \
+    export NAME="gh" && \
+    export VERSION="2.67.0" && \
+    export ARCH="$(arch | sed 's/aarch64/arm64/' | sed 's/x86_64/amd64/')" && \
+    cd ${HOME}/bin && \
+    curl -k -O -L https://github.com/cli/cli/releases/download/v${VERSION}/${NAME}_${VERSION}_linux_${ARCH}.tar.gz && \
+    tar xzf ${NAME}_${VERSION}_linux_${ARCH}.tar.gz && \
+    rm ${NAME}_${VERSION}_linux_${ARCH}.tar.gz && \
+    ln -s ${NAME}_${VERSION}_linux_${ARCH}/bin/gh gh
 
 # pretty bash
 COPY --chown=${USERNAME}:${USERNAME} .bash_pretty ${HOME}/.bash_rust
