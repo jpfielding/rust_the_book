@@ -1,6 +1,10 @@
 FROM rockylinux:8.5 as base
 
-ARG REPO_NAME=rust-play
+# Add ca certs so we can build the image on vpn
+COPY cas.pem /etc/pki/ca-trust/source/anchors/cas.pem 
+RUN update-ca-trust
+
+ARG REPO_NAME=rust_the_book
 ARG USERNAME=rusty
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
