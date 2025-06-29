@@ -41,6 +41,11 @@
 		  "source": "${localEnv:HOME}/.ssh",
 		  "target": "/home/${localEnv:USER:play}/.ssh"
 		},
+		{ 
+		  "type": "bind",
+		  "source": "${localEnv:HOME}/.gemini",
+		  "target": "/home/${localEnv:USER:play}/.gemini"
+		},
 		{
 		  "type": "bind",
 		  "source": "${localEnv:HOME}/.bash_history_${localWorkspaceFolderBasename}",
@@ -54,6 +59,7 @@
 		"ssh dir":    "mkdir -p ${localEnv:HOME}/.ssh",
 		"gitconfig":  "touch ${localEnv:HOME}/.gitconfig",
 		"git creds":  "touch ${localEnv:HOME}/.git-credentials",
+		"gemini":      "touch ${localEnv:HOME}/.gemini",
 		"bash history": "touch ${localEnv:HOME}/.bash_history_${localWorkspaceFolderBasename}"
 	  },
 	  "forwardPorts": []

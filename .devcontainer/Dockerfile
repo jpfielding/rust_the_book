@@ -65,3 +65,15 @@ COPY --chown=${USERNAME}:${USERNAME} .bash_pretty ${HOME}/.bash_pretty
 RUN set -eux && \
     echo "source ${HOME}/.bash_pretty" >> ${HOME}/.bashrc
 
+# gemini-cli 
+ENV GEMINI_API_KEY="SET_FOR_HIGHER_RATE_LIMITS"
+ENV NVM_DIR "${HOME}/.nvm"
+RUN mkdir -p ${NVM_DIR} && \
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash && \
+    source "$NVM_DIR/nvm.sh" && \
+    nvm install 22 && \
+    echo "source $NVM_DIR/nvm.sh" >> "$HOME/.bash_npm" && \
+    echo "source $NVM_DIR/bash_completion" >> "$HOME/.bash_npm" && \
+    echo "nvm install 22" >> "$HOME/.bash_npm" && \
+    echo "source ${HOME}/.bash_npm" >> ${HOME}/.bashrc && \
+    npm install -g @google/gemini-cli
