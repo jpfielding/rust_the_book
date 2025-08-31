@@ -11,4 +11,4 @@ members = [
     "sig_nix",
     "trie",
     "web_server"    
-, "rb_3_5_control_flow/rb_3_5_control_flow"]
+, "rb_3_5_control_flow/rb_3_5_control_flow", "rb_4_1_ownership/rb_4_1_ownership"]
