@@ -59,7 +59,11 @@
 		"ssh dir":    "mkdir -p ${localEnv:HOME}/.ssh",
 		"gitconfig":  "touch ${localEnv:HOME}/.gitconfig",
 		"git creds":  "touch ${localEnv:HOME}/.git-credentials",
+<<<<<<< HEAD
 		"gemini":     "mkdir ${localEnv:HOME}/.gemini 2>/dev/null || true",
+=======
+		"gemini":      "mkdir ${localEnv:HOME}/.gemini || true",
+>>>>>>> 0003f8bd762484023fbc4086cd36b32756e0e774
 		"bash history": "touch ${localEnv:HOME}/.bash_history_${localWorkspaceFolderBasename}"
 	  },
 	  "forwardPorts": []
