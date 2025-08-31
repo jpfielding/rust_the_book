@@ -47,8 +47,12 @@ fn stack_only_data() {
 
 fn ownership_and_functions() {
     let s = String::from("hello"); // s comes into scope
-    takes_ownership(s); // s's value moves into the function and is no longer valid here
-    // println!("{}", s); // this would cause a compile-time error
+    takes_ownership(s.clone()); // s's value moves into the function and is no longer valid here
+    println!("{}", s); // this would cause a compile-time error
+
+    let t = String::from("world"); // s comes into scope
+    takes_ownership(t); // s's value moves into the function and is no longer valid here
+    // println!("{}", t); // this would cause a compile-time error
 
     let x = 5; // x comes into scope
     makes_copy(x); // x is copied into the function, so it's still valid here
