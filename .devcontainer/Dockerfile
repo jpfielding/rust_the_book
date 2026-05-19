@@ -1,7 +1,7 @@
 FROM rockylinux/rockylinux:10 AS base
 
-ARG REPO_NAME=agentstate
-ARG USERNAME=agentstate
+ARG REPO_NAME=rust_the_book
+ARG USERNAME=krusty
 ARG GROUPNAME=${USERNAME}
 ARG USER_UID=1000
 ARG USER_GID=1000
@@ -21,8 +21,17 @@ RUN dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.rep
 
 FROM base as user
 
-# Create the user
-RUN groupadd --gid ${USER_GID} ${USERNAME} && \
+# Create the user to mirror the macOS host: UID 501 in group "staff" (GID 20).
+# Rocky 10 ships GID 20 as "games" and may already have UID 501 assigned;
+# evict both before claiming the slot. Matching the host's real ids means
+# bind mounts from /Users/<you> are writable without userns translation —
+# which doesn't work through libkrun's virtio-fs anyway.
+RUN groupdel games 2>/dev/null || true && \
+    if getent passwd ${USER_UID} >/dev/null; then \
+        existing_uname=$(getent passwd ${USER_UID} | cut -d: -f1) && \
+        userdel -r "$existing_uname" 2>/dev/null || usermod -u 65501 "$existing_uname"; \
+    fi && \
+    groupadd --gid ${USER_GID} ${USERNAME} && \
     useradd --uid ${USER_UID} --gid ${USER_GID} -m ${USERNAME} -s /bin/bash && \
     echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} && \
     chmod 0440 /etc/sudoers.d/${USERNAME}

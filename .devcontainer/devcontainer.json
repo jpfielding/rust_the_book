@@ -8,8 +8,8 @@
 		"target": "user",
 		"args": {
 			"USERNAME": "${localEnv:USER:play}",
-			"USER_UID": "${localEnv:UID:1000}",
-			"USER_GID": "${localEnv:GID:1000}"
+			"USER_UID": "501",
+			"USER_GID": "20"
 		}
 	},
 	"customizations": {
@@ -17,10 +17,10 @@
 			"extensions": [
 				"rust-lang.rust-analyzer",
 				"vadimcn.vscode-lldb",
-				"tamasfe.even-better-toml",
 				"GitHub.copilot-chat",
 				"Anthropic.claude-code",
-				"openai.chatgpt"
+				"openai.chatgpt",
+				"juggernautjp.less-toml"
 			]
 		}
 	},
@@ -80,18 +80,7 @@
 		"bash history": "touch ${localEnv:HOME}/.bash_history_${localWorkspaceFolderBasename}"
 	},
 	"runArgs": [
-		"--uidmap",
-		"0:0:501",
-		"--uidmap",
-		"${localEnv:UID:1000}:501:1",
-		"--uidmap",
-		"1001:1001:64535",
-		"--gidmap",
-		"0:0:20",
-		"--gidmap",
-		"${localEnv:GID:1000}:20:1",
-		"--gidmap",
-		"1001:21:64515"
+		"--userns=keep-id"
 	],
 	"forwardPorts": []
 }
