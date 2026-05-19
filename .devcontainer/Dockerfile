@@ -1,32 +1,33 @@
-FROM rockylinux:8.5 as base
+FROM rockylinux/rockylinux:10 AS base
+
+ARG REPO_NAME=agentstate
+ARG USERNAME=agentstate
+ARG GROUPNAME=${USERNAME}
+ARG USER_UID=1000
+ARG USER_GID=1000
 
 # Add ca certs so we can build the image on vpn
-COPY cas.pem /etc/pki/ca-trust/source/anchors/cas.pem 
+COPY cas.pem /etc/pki/ca-trust/source/anchors/custom_cas.pem
 RUN update-ca-trust
 
-ARG REPO_NAME=rust_the_book
-ARG USERNAME=rusty
-ARG USER_UID=1000
-ARG USER_GID=$USER_UID
+RUN dnf install -y epel-release && dnf -y update
+RUN dnf install -y curl-minimal git iproute iputils jq make openssl sudo wget which zip zsh \
+    gcc gcc-c++ pkgconfig openssl-devel
 
-RUN set -eux -o pipefail && \
-    dnf install -y curl dnf-utils dnf-plugins-core epel-release git jq ncurses sudo which rsync && \
-    dnf config-manager --set-enabled powertools && \ 
-    dnf install -y ca-certificates cmake gcc gcc-c++ glib2-devel xz
+# GitHub CLI
+RUN dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && \
+    dnf install -y gh && \
+    gh --version
 
-# envs
-ENV INSTALL_PATH "/usr/local"
-ENV PATH ${HOME}/bin:${PATH}
+FROM base as user
 
 # Create the user
 RUN groupadd --gid ${USER_GID} ${USERNAME} && \
-  useradd --uid ${USER_UID} --gid ${USER_GID} -m ${USERNAME} -s /bin/zsh && \
-  echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} && \
-  chmod 0440 /etc/sudoers.d/${USERNAME}
-
+    useradd --uid ${USER_UID} --gid ${USER_GID} -m ${USERNAME} -s /bin/bash && \
+    echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} && \
+    chmod 0440 /etc/sudoers.d/${USERNAME}
+    
 ########### NON ROOT FROM HERE DOWN ###########
-FROM base as user
-
 USER ${USERNAME}
 
 RUN set -eux && \
@@ -47,7 +48,7 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y
 # gh
 RUN set -eux && \
     export NAME="gh" && \
-    export VERSION="2.67.0" && \
+    export VERSION="2.92.0" && \
     export ARCH="$(arch | sed 's/aarch64/arm64/' | sed 's/x86_64/amd64/')" && \
     cd ${HOME}/bin && \
     curl -k -O -L https://github.com/cli/cli/releases/download/v${VERSION}/${NAME}_${VERSION}_linux_${ARCH}.tar.gz && \
@@ -55,7 +56,7 @@ RUN set -eux && \
     rm ${NAME}_${VERSION}_linux_${ARCH}.tar.gz && \
     ln -s ${NAME}_${VERSION}_linux_${ARCH}/bin/gh gh
 
-# pretty bash
+# rust
 COPY --chown=${USERNAME}:${USERNAME} .bash_pretty ${HOME}/.bash_rust
 RUN set -eux && \
     echo "source ${HOME}/.bash_rust" >> ${HOME}/.bashrc
@@ -64,16 +65,3 @@ RUN set -eux && \
 COPY --chown=${USERNAME}:${USERNAME} .bash_pretty ${HOME}/.bash_pretty
 RUN set -eux && \
     echo "source ${HOME}/.bash_pretty" >> ${HOME}/.bashrc
-
-# gemini-cli (set GEMINI_API_KEY for higher rate limit)
-ENV GEMINI_API_KEY=""
-ENV NVM_DIR "${HOME}/.nvm"
-RUN mkdir -p ${NVM_DIR} && \
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash && \
-    source "$NVM_DIR/nvm.sh" && \
-    nvm install 22 && \
-    echo "source $NVM_DIR/nvm.sh" >> "$HOME/.bash_npm" && \
-    echo "source $NVM_DIR/bash_completion" >> "$HOME/.bash_npm" && \
-    echo "nvm install 22" >> "$HOME/.bash_npm" && \
-    echo "source ${HOME}/.bash_npm" >> ${HOME}/.bashrc && \
-    npm install -g @google/gemini-cli
