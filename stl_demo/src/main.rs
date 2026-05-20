@@ -201,6 +201,86 @@ pub fn evaluate_along(spec: &dyn Formula, tr: &Trace, times: &[DateTime<Utc>]) -
 }
 
 fn main() {
+    temps();
+    cars();
+}
+
+fn cars() {
+    println!("Cars example:");
+    let t0 = DateTime::<Utc>::from_timestamp(0, 0).unwrap();
+    let ms = |n: i64| t0 + Duration::milliseconds(n);
+    let mut tr = Trace { 0: HashMap::new() };
+    #[rustfmt::skip]
+    let speed = vec![
+        // phase 1 — speeding, no brake
+        Sample { t: ms(0),    v: 70.0 },
+        Sample { t: ms(300),  v: 70.0 },
+        Sample { t: ms(600),  v: 70.0 },
+        // phase 2 — compliant
+        Sample { t: ms(1000), v: 70.0 }, // late brake response arrives
+        Sample { t: ms(2000), v: 50.0 }, // back under the limit
+        Sample { t: ms(3000), v: 60.0 }, // speeding up
+        Sample { t: ms(3200), v: 70.0 },
+        Sample { t: ms(4000), v: 80.0 }, // speeding again
+        // phase 3 — speeding, brake stays under
+        Sample { t: ms(5000), v: 70.0 },
+        Sample { t: ms(5300), v: 70.0 },
+        Sample { t: ms(5500), v: 70.0 },
+        Sample { t: ms(6000), v: 40.0 },
+    ];
+    #[rustfmt::skip]
+    let brake = vec![
+        // phase 1
+        Sample { t: ms(0),    v: 0.0  },
+        Sample { t: ms(300),  v: 0.0  },
+        Sample { t: ms(600),  v: 0.0  },
+        // phase 2
+        Sample { t: ms(1000), v: 0.9  }, // arrives just outside [0,500ms]
+        Sample { t: ms(2000), v: 0.0  },
+        Sample { t: ms(3000), v: 0.0  },
+        Sample { t: ms(3200), v: 0.9  }, // responds within 500ms of t=3s
+        Sample { t: ms(4000), v: 0.9  },
+        // phase 3 — brake reaches for 0.5 but never crosses
+        Sample { t: ms(5000), v: 0.30 },
+        Sample { t: ms(5300), v: 0.40 },
+        Sample { t: ms(5500), v: 0.45 },
+        Sample { t: ms(6000), v: 0.0  },
+    ];
+    tr.0.insert("speed".to_string(), Signal(speed));
+    tr.0.insert("brake".to_string(), Signal(brake));
+
+    // "Always between 0 and 1 s, if speed > 60 then eventually within 500 ms brake > 0.5"
+    let spec = Always {
+        a: Duration::zero(),
+        b: Duration::milliseconds(1000),
+        f: Box::new(implies(
+            Box::new(Atom {
+                channel: "speed".into(),
+                op: Op::Gt,
+                bound: 60.0,
+            }),
+            Box::new(Eventually {
+                a: Duration::zero(),
+                b: Duration::milliseconds(500),
+                f: Box::new(Atom {
+                    channel: "brake".into(),
+                    op: Op::Gt,
+                    bound: 0.5,
+                }),
+            }),
+        )),
+    };
+    let sec = |n: i64| t0 + Duration::seconds(n);
+    let times: Vec<_> = (0..10).map(sec).collect();
+    let r = evaluate_along(&spec, &tr, &times);
+
+    for sm in &r.0 {
+        println!("t={:>2}s  robustness={:+.2}", sm.t.timestamp(), sm.v);
+    }
+}
+
+fn temps() {
+    println!("Temperature example:");
     let t0 = DateTime::<Utc>::from_timestamp(0, 0).unwrap();
     let sec = |n: i64| t0 + Duration::seconds(n);
 
