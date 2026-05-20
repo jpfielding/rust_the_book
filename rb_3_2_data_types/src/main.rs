@@ -7,7 +7,6 @@ fn main() {
     parameters();
 }
 
-
 fn tuple() {
     let tup = (500, 6.4, 1);
 
@@ -48,20 +47,20 @@ fn array_overrun() {
     loop {
         print!("Please enter a valid array index: ");
         io::stdout().flush().expect("failed to wipe before flush?");
-        
+
         let mut index = String::new();
 
         io::stdin()
             .read_line(&mut index)
             .expect("Failed to read line");
 
-        let index: usize = match index.trim().parse(){
-                Ok(num) => num,
-                Err(_) => continue,
-            };
+        let index: usize = match index.trim().parse() {
+            Ok(num) => num,
+            Err(_) => continue,
+        };
 
         let element = a[index];
-    
+
         println!("The value of the element at index {index} is: {element}");
         break;
     }
@@ -72,4 +71,3 @@ fn parameters() {
     };
     print_labeled_measurement(5, 'h');
 }
-

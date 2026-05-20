@@ -13,7 +13,6 @@ fn main() {
     move_len_calc();
 }
 
-
 fn scope_assignment() {
     let x = 5; // x comes into scope
     let y = x; // x is copied into y (i32 implements the Copy trait)

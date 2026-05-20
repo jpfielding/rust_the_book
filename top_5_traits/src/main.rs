@@ -1,6 +1,6 @@
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
-use std::{sync::Arc};
+use std::sync::Arc;
 
 #[derive(Debug, Clone, Default, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
@@ -17,8 +17,8 @@ struct DB {}
 #[derive(Debug, Clone, Default, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct User {
-    id: u32, 
-    name: String, 
+    id: u32,
+    name: String,
     role: Role,
     #[cfg_attr(feature = "serde", serde(skip))]
     db: Arc<DB>,
@@ -29,12 +29,12 @@ pub struct User {
 // cargo run --features serde
 fn main() {
     let user = User {
-        id: 123, 
+        id: 123,
         name: "bogdan".to_owned(),
-        role:  Role::Admin,
+        role: Role::Admin,
         db: Arc::new(DB {}),
     };
-    
+
     println!("{:?}", user);
 
     let user2 = user.clone();
@@ -52,7 +52,6 @@ fn main() {
 
     #[cfg(feature = "serde")]
     println!("{:?}", user);
-
 }
 
 // rust for rustaceans
