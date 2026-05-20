@@ -1,5 +1,5 @@
 use chrono::{DateTime, Duration, Utc};
-use std::{collections::HashMap};
+use std::collections::HashMap;
 
 /// A sample is a timestamped value.
 #[derive(Debug, Clone, Copy)]
@@ -140,7 +140,7 @@ impl Trace {
     }
 }
 
-/// An always formula is satisfied if and only if the subformula is satisfied at all times in the given time window, 
+/// An always formula is satisfied if and only if the subformula is satisfied at all times in the given time window,
 /// so the robustness of an always formula is the minimum of the robustness of the subformula at all times in the time window.
 pub struct Always {
     pub a: Duration,
@@ -148,9 +148,9 @@ pub struct Always {
     pub f: Box<dyn Formula>,
 }
 
-/// Robustness of an always formula is the minimum of the robustness of the subformula at all times in the time window. 
-/// We can compute this by first finding all sample times in the trace that are within the time window, and then taking 
-/// the minimum robustness of the subformula at those times. If there are no sample times in the time window, we can 
+/// Robustness of an always formula is the minimum of the robustness of the subformula at all times in the time window.
+/// We can compute this by first finding all sample times in the trace that are within the time window, and then taking
+/// the minimum robustness of the subformula at those times. If there are no sample times in the time window, we can
 /// return positive infinity, since the formula is vacuously satisfied.
 impl Formula for Always {
     fn robustness(&self, tr: &Trace, t: DateTime<Utc>) -> f64 {
@@ -165,7 +165,7 @@ impl Formula for Always {
     }
 }
 
-/// An eventually formula is satisfied if and only if the subformula is satisfied at some time in the given time window, 
+/// An eventually formula is satisfied if and only if the subformula is satisfied at some time in the given time window,
 /// so the robustness of an eventually formula is the maximum of the robustness of the subformula at all times in the time window.
 pub struct Eventually {
     pub a: Duration,
@@ -187,16 +187,15 @@ impl Formula for Eventually {
     }
 }
 
-/// Evaluates the robustness of the formula at all sample times in the trace, and returns a signal of the robustness 
+/// Evaluates the robustness of the formula at all sample times in the trace, and returns a signal of the robustness
 /// values at those times.
-pub fn evaluate_along(
-    spec: &dyn Formula, 
-    tr: &Trace,
-    times: &[DateTime<Utc>],
-) -> Signal {
+pub fn evaluate_along(spec: &dyn Formula, tr: &Trace, times: &[DateTime<Utc>]) -> Signal {
     let samples = times
         .iter()
-        .map(|&t| Sample{t, v: spec.robustness(tr, t)})
+        .map(|&t| Sample {
+            t,
+            v: spec.robustness(tr, t),
+        })
         .collect();
     Signal(samples)
 }
@@ -207,20 +206,24 @@ fn main() {
 
     // Temperature ramps 20.0 → 33.5 °C over 10 s.
     // Crosses the 30 °C threshold at t = 7 s.
-    let temp = Signal (
+    let temp = Signal(
         (0..10)
-            .map(|i| Sample{ t: sec(i), v: 20.0 + (1 as f64) * 1.5})
-            .collect()
+            .map(|i| Sample {
+                t: sec(i),
+                v: 20.0 + (i as f64) * 1.5,
+            })
+            .collect(),
     );
 
     let mut tr = Trace { 0: HashMap::new() };
     tr.0.insert("temp".into(), temp);
 
-    let safe = Atom{
+    let safe = Atom {
         channel: "temp".into(),
         op: Op::Lt,
         bound: 30.0,
     };
+
     // "For the next 5 s, temp stays below 30 °C."
     let always_safe = Always {
         a: Duration::seconds(0),
@@ -232,6 +235,6 @@ fn main() {
     let r = evaluate_along(&always_safe, &tr, &times);
 
     for sm in &r.0 {
-        println!("t={:>2}s robustness={:+.2}", sm.t.timestamp(), sm.v);
+        println!("t={:>2}s  robustness={:+.2}", sm.t.timestamp(), sm.v);
     }
- }
+}
