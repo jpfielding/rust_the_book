@@ -5,10 +5,17 @@ fn main() {
 }
 
 fn assign() {
-    let x = 5;
+    let mut x = 5;
     println!("The value of x is: {x}");
-    // x = 6;
-    // println!("The value of x is: {x}");
+
+    let y = 10;
+    println!("The value of y is: {y}");
+    
+    x = 6; // x is mut
+    println!("The value of x is: {x}");
+
+    let y = "six";  // shadowing type
+    println!("The value of y is: {y}");
 }
 
 fn shadow() {
