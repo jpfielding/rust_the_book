@@ -15,6 +15,10 @@ fn tuple() {
     println!("The value of x is: {x}");
     println!("The value of y is: {y}");
     println!("The value of z is: {z}");
+
+    let cat = ('c', 'a', 't');
+    let (c, a, t) = cat;
+    println!("The value of (c,a,t) is: {c} {a} {t}");
 }
 fn array() {
     let a = [1, 2, 3, 4, 5];
@@ -45,7 +49,7 @@ fn array_overrun() {
     let a = [1, 2, 3, 4, 5];
 
     loop {
-        print!("Please enter a valid array index: ");
+        print!("Please enter a valid array index 0-{}: ", a.len()-1);
         io::stdout().flush().expect("failed to wipe before flush?");
 
         let mut index = String::new();
