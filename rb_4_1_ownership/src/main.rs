@@ -24,12 +24,16 @@ fn ownership_transfer() {
     let s2 = s1; // ownership of the String is moved to s2
     // println!("{}", s1); // this would cause a compile-time error because s1 is no longer valid
     println!("{}", s2); // s2 is valid and can be used
+
+    let s3 = "test";
+    let s4 = s3; // s3 is copied into s4 (string literals have 'static lifetime and are Copy)
+    println!("s3: {}, s4: {}", s3, s4);
 }
 
 fn drop_example() {
-    let mut s = String::from("hello");
-    s = String::from("ahoy");
-
+    let mut s = String::from("hello"); // s comes into scope
+    println!("{s}, world!");
+    s = String::from("ahoy"); // s's value is changed, the old value is dropped
     println!("{s}, world!");
 }
 
