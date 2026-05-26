@@ -11,6 +11,7 @@ fn main() {
     ownership_and_functions();
     return_values_scope();
     move_len_calc();
+    boxes();
 }
 
 fn scope_assignment() {
@@ -100,4 +101,12 @@ fn calculate_length(s: String) -> (String, usize) {
     let length = s.len(); // len() returns the length of a String
 
     (s, length)
+}
+
+
+fn boxes() {
+    let a = [0; 1_000_000]; // large array on the stack
+    let b = Box::new(a); // move the large array to the heap
+    let c = b; // ownership of the Box is moved to c
+    println!("c[0]: {}", c.len());
 }
