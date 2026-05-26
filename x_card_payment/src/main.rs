@@ -59,11 +59,11 @@ fn main() {
     };
 
     let check_payment = Payment {
-        amount: 100.33,
+        amount: 0.33,
         currency: Currency::Usd,
         method: PaymentMethod::Check(42),
     };
 
-    println!("Payment details: {}\n", check_payment.payment_info());
     println!("Payment details: {}\n", cc_payment.payment_info());
+    println!("Payment details: {}\n", check_payment.payment_info());
 }
