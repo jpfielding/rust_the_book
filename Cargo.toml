@@ -6,7 +6,7 @@ members = [
     "rb_2_0_guessing_game",
     "rb_3_1_variables",
     "rb_3_2_data_types",
-    "rb_3_3_functions/rb_3_3_functions",
+    "rb_3_3_functions",
     "rb_3_5_control_flow",
     "rb_4_1_ownership", 
     "rb_4_2_refs_borrow", 

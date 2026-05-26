@@ -1,8 +1,11 @@
 use std::io::{self, Write};
+use strum::IntoEnumIterator;
+use strum_macros::EnumIter;
 
 fn main() {
     tuple();
     array();
+    enums();
     array_overrun();
     parameters();
 }
@@ -24,7 +27,7 @@ fn array() {
     let a = [1, 2, 3, 4, 5];
     println!("The value of a is: {:?}", a);
 
-    let months = [
+    let months: [&str; 12] = [
         "January",
         "February",
         "March",
@@ -38,6 +41,33 @@ fn array() {
         "November",
         "December",
     ];
+    println!("The value of months is: {:?}", months);
+
+    let a2: [i32; 5] = [1, 2, 3, 4, 5];
+    let _first = a2[0];
+    let _second = a2[1];
+}
+fn enums() {
+    let a = [1, 2, 3, 4, 5];
+    println!("The value of a is: {:?}", a);
+
+    #[derive(Debug, EnumIter)]
+    enum Month{
+        January,
+        February,
+        March,
+        April,
+        May,
+        June,
+        July,
+        August,
+        September,
+        October,
+        November,
+        December
+    }
+
+    let months: Vec<Month> = Month::iter().collect();
     println!("The value of months is: {:?}", months);
 
     let a2: [i32; 5] = [1, 2, 3, 4, 5];
