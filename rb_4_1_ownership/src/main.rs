@@ -109,4 +109,12 @@ fn boxes() {
     let b = Box::new(a); // move the large array to the heap
     let c = b; // ownership of the Box is moved to c
     println!("c[0]: {}", c.len());
+
+    fn add_suffix(s: String) -> String {
+        s + " Jr."
+    }
+
+    let first = String::from("Ferris");
+    let full = add_suffix(first);
+    println!("{full}");
 }
