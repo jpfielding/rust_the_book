@@ -110,11 +110,11 @@ fn boxes() {
     let c = b; // ownership of the Box is moved to c
     println!("c[0]: {}", c.len());
 
-    fn add_suffix(s: String) -> String {
-        s + " Jr."
+    fn add_suffix(s: String) -> String { // s comes into scope
+        s + " Jr." // 
     }
 
-    let first = String::from("Ferris");
-    let full = add_suffix(first);
+    let first = String::from("Ferris"); // first comes into scope
+    let full = add_suffix(first); // first is moved into the function and is no longer valid here
     println!("{full}");
 }
