@@ -1,4 +1,10 @@
 {
+    "rust-analyzer.check.command": "clippy",
+    "rust-analyzer.cargo.allFeatures": true,
+    "[rust]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "rust-lang.rust-analyzer"
+    },
     "extensions.ignoreRecommendations": true,
     "terminal.integrated.profiles.linux": {
         "bash": {
@@ -13,7 +19,15 @@
     },
     "terminal.integrated.defaultProfile.osx": "zsh",
     "search.exclude": {
+        "**/target": true,
         "**/vendor": true,
         "**/third_party": true
     }
+    // ,
+    // "editor.quickSuggestions": {
+    //     "other": "off",
+    //     "comments": "on",
+    //     "strings": "off"
+    // },
+    // "editor.suggestOnTriggerCharacters": false
 }

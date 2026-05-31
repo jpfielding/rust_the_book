@@ -17,5 +17,5 @@ members = [
     "x_sig_nix",
     "x_trie",
     "x_web_server", 
-    "x_card_payment", "x_threads_ownership_tokio", "x_tokio_canc", "x_web_server_2",
+    "x_card_payment", "x_threads_ownership_tokio", "x_tokio_canc", "x_web_server_2", "x_tokio_axum_cli_chans",
     ]
