@@ -14,7 +14,7 @@ fn print_labeled_measurement(value: i32, unit_label: char) {
 fn another_function(x: i32) {
     println!("The value of x is: {x}");
 }
-fn sum_str_vec(strs: Vec<&str>){
+fn sum_str_vec(strs: Vec<&str>) {
     let mut acc1 = 0;
     let mut acc2 = 0;
     let mut acc3 = 0;
@@ -35,8 +35,10 @@ fn sum_str_vec(strs: Vec<&str>){
     println!("The sum of the vector unwrap_or is: {}", acc2);
     println!("The sum of the vector if let is: {}", acc3);
     // fluent style using iterators and combinators
-    let acc4 = strs.iter()
+    let acc4 = strs
+        .iter()
         .map(|s| s.parse::<i32>().unwrap_or(0))
-        .sum::<i32>().to_string();
+        .sum::<i32>()
+        .to_string();
     println!("The sum of the vector fluent style is: {}", acc4);
 }

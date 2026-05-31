@@ -1,25 +1,35 @@
 use axum::Router;
 use axum::http::StatusCode;
 use axum::routing::get;
-// use clap::Parser;
+use clap::Parser;
 use tokio::net::TcpListener;
 
-static DEFAULT_PORT: &str = "8080";
+#[derive(Parser)]
+#[command(name = "web-service", about = "Web Service Daemon")]
+struct Cli {
+    #[arg(short, long, default_value = "8080", env = "DEFAULT_PORT")]
+    port: String,
+}
 
 #[tokio::main]
-async fn main() -> Result<(), String> {
-    let port: u16 = std::env::args()
-        .nth(1)
-        .unwrap_or_else(|| DEFAULT_PORT.to_string())
-        .parse()
-        .expect("invalid port number");
+async fn main() {
+    let cli = Cli::parse();
+    if let Err(e) = run(cli).await {
+        eprintln!("error: {e}");
+        std::process::exit(1);
+    }
+}
+
+async fn run(cli: Cli) -> Result<(), String> {
+    let port: u16 = cli.port.parse().expect("invalid port number");
 
     let bind = format!("0.0.0.0:{port}");
 
     let listener = TcpListener::bind(&bind)
         .await
         .map_err(|e| format!("bind {bind}: {e}"))?;
-    eprintln!("agentstate-service listening on http://{bind}");
+
+    eprintln!("web-service listening on http://{bind}");
 
     axum::serve(listener, router())
         .with_graceful_shutdown(shutdown_signal())
@@ -42,10 +52,10 @@ async fn shutdown_signal() {
 
     tokio::select! {
         _ = ctrl_c => {
-            println!("SIGHUP received, reloading config...");
+            println!("SIGINT received, relaying shutdown...");
         }
         _ = terminate => {
-            println!("SIGINT received, exiting...");
+            println!("SIGTERM received, relaying shutdown...");
         }
     }
 }
