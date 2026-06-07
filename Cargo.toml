@@ -21,5 +21,5 @@ members = [
     "x_threads_ownership_tokio", 
     "x_tokio_canc", 
     "x_web_server_2", 
-    "x_tokio_axum_cli_chans",
+    "x_tokio_axum_cli_chans", "x_stl_horizon_dichotomy", "x_stl_rnn",
     ]

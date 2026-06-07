@@ -1,0 +1,10 @@
+[package]
+name = "x_stl_rnn"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# `ndarray` backend = pure-Rust matmul (matrixmultiply). The `flex` backend
+# pulls in `gemm`/`gemm-f16`, whose hand-written aarch64 fp16 assembly fails to
+# build on the generic target — overkill for a tiny RNN anyway.
+burn       = { version = "0.21.0", default-features = false, features = ["std", "ndarray", "autodiff"] }
