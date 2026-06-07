@@ -25,8 +25,8 @@ use burn::module::Module;
 use burn::nn::loss::{MseLoss, Reduction};
 use burn::nn::{Linear, LinearConfig, Lstm, LstmConfig};
 use burn::optim::{AdamConfig, GradientsParams, Optimizer};
-use burn::tensor::backend::Backend;
 use burn::tensor::Tensor;
+use burn::tensor::backend::Backend;
 
 // ---------------------------------------------------------------------------
 // STL ground truth — the monitor we want the RNN to imitate.
@@ -55,7 +55,10 @@ struct Lcg(u64);
 impl Lcg {
     fn next_f32(&mut self) -> f32 {
         // Numerical Recipes constants; take the top bits for a [0,1) float.
-        self.0 = self.0.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+        self.0 = self
+            .0
+            .wrapping_mul(6364136223846793005)
+            .wrapping_add(1442695040888963407);
         ((self.0 >> 40) as f32) / ((1u64 << 24) as f32)
     }
 }
@@ -66,7 +69,7 @@ impl Lcg {
 fn make_signal(seq_len: usize, rng: &mut Lcg) -> Vec<f32> {
     let f1 = 0.15 + 0.25 * rng.next_f32();
     let f2 = 0.40 + 0.40 * rng.next_f32();
-    let phase = 6.283 * rng.next_f32();
+    let phase = std::f32::consts::TAU * rng.next_f32();
     let bias = 0.6 * rng.next_f32() - 0.3;
     (0..seq_len)
         .map(|t| {
@@ -165,7 +168,11 @@ fn main() {
         if epoch == 0 || (epoch + 1) % 50 == 0 {
             // Re-evaluate loss off the graph just for reporting.
             let l = MseLoss::new()
-                .forward(model.forward(x_train.clone()), y_train.clone(), Reduction::Mean)
+                .forward(
+                    model.forward(x_train.clone()),
+                    y_train.clone(),
+                    Reduction::Mean,
+                )
                 .into_scalar();
             println!("  epoch {:>4}   mse = {:.5}", epoch + 1, l);
         }
@@ -217,9 +224,7 @@ fn main() {
         .map(|(a, b)| (a - b).abs())
         .sum::<f32>()
         / SEQ as f32;
-    println!(
-        "\n  boolean agreement: {agree}/{SEQ} timesteps   |   robustness MAE: {mae:.3}"
-    );
+    println!("\n  boolean agreement: {agree}/{SEQ} timesteps   |   robustness MAE: {mae:.3}");
     println!(
         "\n  The LSTM never saw the STL formula — only (signal, robustness) pairs.\n  \
          It has reconstructed the causal windowed-min monitor from examples."
