@@ -79,8 +79,5 @@
 		"cargo registry": "mkdir -p ${localEnv:HOME}/.cargo/registry || true",
 		"bash history": "touch ${localEnv:HOME}/.bash_history_${localWorkspaceFolderBasename}"
 	},
-	"runArgs": [
-		"--userns=keep-id"
-	],
 	"forwardPorts": []
 }
