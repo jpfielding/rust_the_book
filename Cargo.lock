@@ -5766,21 +5766,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "web_server"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "clap",
- "futures",
- "indoc",
- "maplit",
- "tokio",
- "tokio-util",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
 name = "webpki-root-certs"
 version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6439,8 +6424,32 @@ dependencies = [
 ]
 
 [[package]]
-name = "x_web_server_2"
+name = "x_web_server"
 version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "futures",
+ "indoc",
+ "maplit",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "x_web_server_async"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "futures",
+ "indoc",
+ "maplit",
+ "tokio",
+ "tokio-util",
+ "tracing",
+ "tracing-subscriber",
+]
 
 [[package]]
 name = "xattr"

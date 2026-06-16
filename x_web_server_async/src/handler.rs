@@ -1,4 +1,4 @@
-use std::{env::current_dir, fs::File, io, path::PathBuf};
+use std::{env::current_dir, io, path::PathBuf};
 
 use crate::{
     req::Request,
@@ -29,7 +29,7 @@ impl StaticFileHandler {
             ));
         }
 
-        let file = File::open(&path)?;
-        Response::from_file(&path, file)
+        let file = tokio::fs::File::open(&path).await?;
+        Response::from_file(&path, file).await
     }
 }

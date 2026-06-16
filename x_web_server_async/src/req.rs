@@ -1,6 +1,7 @@
 // req.rs
-use std::collections::HashMap;
-use std::io::BufRead;
+use std::{collections::HashMap, hash::Hash};
+
+use tokio::io::{AsyncBufRead, AsyncBufReadExt};
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Request {
@@ -25,9 +26,9 @@ impl TryFrom<&str> for Method {
     }
 }
 
-pub fn parse_request(mut stream: impl BufRead) -> anyhow::Result<Request> {
+pub async fn parse_request(mut stream: impl AsyncBufRead + Unpin) -> anyhow::Result<Request> {
     let mut line_buffer = String::new();
-    stream.read_line(&mut line_buffer)?;
+    stream.read_line(&mut line_buffer).await?;
 
     let mut parts = line_buffer.split_whitespace();
 
@@ -45,7 +46,7 @@ pub fn parse_request(mut stream: impl BufRead) -> anyhow::Result<Request> {
 
     loop {
         line_buffer.clear();
-        stream.read_line(&mut line_buffer)?;
+        stream.read_line(&mut line_buffer).await?;
 
         if line_buffer.is_empty() || line_buffer == "\n" || line_buffer == "\r\n" {
             break;

@@ -1,15 +1,20 @@
-use std::collections::HashMap;
-use std::fmt::{Display, Formatter};
-use std::fs::File; // was: tokio::fs::File
-use std::io::{Cursor, Read, Write}; // was: tokio::io::{AsyncRead, AsyncWrite, AsyncWriteExt}
-use std::path::Path;
+use std::{
+    collections::HashMap,
+    fmt::{Debug, Display, Formatter},
+    io::Cursor,
+    path::Path,
+};
 
 use maplit::hashmap;
+use tokio::{
+    fs::File,
+    io::{AsyncRead, AsyncWrite, AsyncWriteExt},
+};
 
 pub struct Response {
     pub status: Status,
     pub headers: HashMap<String, String>,
-    pub data: Box<dyn Read + Send>,
+    pub data: Box<dyn AsyncRead + Unpin + Send>,
 }
 
 impl Response {
@@ -24,12 +29,12 @@ impl Response {
         format!("HTTP/1.1 {}\r\n{headers}\r\n\r\n", self.status)
     }
 
-    pub fn write<O: Write>(&mut self, stream: &mut O) -> anyhow::Result<()> {
+    pub async fn write<O: AsyncWrite + Unpin>(mut self, stream: &mut O) -> anyhow::Result<()> {
         let bytes = self.status_and_headers().into_bytes();
 
-        stream.write_all(&bytes)?;
+        stream.write_all(&bytes).await?;
 
-        std::io::copy(&mut self.data, stream)?;
+        tokio::io::copy(&mut self.data, stream).await?;
 
         Ok(())
     }
@@ -49,9 +54,9 @@ impl Response {
         }
     }
 
-    pub fn from_file(path: &Path, file: File) -> anyhow::Result<Response> {
+    pub async fn from_file(path: &Path, file: File) -> anyhow::Result<Response> {
         let headers = hashmap! {
-            "Content-Length".to_string() => file.metadata()?.len().to_string(),
+            "Content-Length".to_string() => file.metadata().await?.len().to_string(),
             "Content-Type".to_string() => mime_type(path).to_string(),
         };
 
