@@ -4,14 +4,14 @@ use tokio::time::sleep;
 use tokio_util::sync::CancellationToken;
 
 pub async fn run() -> anyhow::Result<()> {
-    let (tx, mut rx) = mpsc::channel::<String>(16);
+    let (tx, mut rx) = mpsc::channel::<String>(1);
     let shutdown = CancellationToken::new();
 
     let child = shutdown.clone();
     let worker = tokio::spawn(async move {
         loop {
             tokio::select! {
-                maybe = rx.recv() => match maybe {
+                maybe = rx.recv() => match maybe { // use maybe to handle the channel closing
                     Some(cmd) => println!("worker: handling '{cmd}'"),
                     None => {
                         println!("worker: channel closed, exiting");

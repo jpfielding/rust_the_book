@@ -19,9 +19,10 @@ enum Lesson {
     Timers,
     /// Race futures conccurently with `select!`
     Select,
+    // SelectChan demonstrates how to use `select!` to listen for multiple events at once, and how to gracefully shut down a worker task by canceling it and draining its channel.
     SelectChan,
-    // /// Run futures concurretly with join!
-    // Join,
+    /// Run futures concurretly with join!
+    Join,
     // /// Many-produce, single-consumer channel
     // Mpsc {
     //     #[arg(default_value_t = 3)]
@@ -60,7 +61,7 @@ async fn main() -> anyhow::Result<()> {
         Lesson::Timers => lessons::timers::run().await,
         Lesson::Select => lessons::select::run().await,
         Lesson::SelectChan => lessons::selectchan::run().await,
-        // Lesson::Join => lessons::join::run().await,
+        Lesson::Join => lessons::join::run().await,
         // Lesson::Mpsc { producers } => lessons::mpsc::run(producers).await,
         // Lesson::Oneshot => lessons::oneshot::run().await,
         // Lesson::Broadcast => lessons::broadcast::run().await,

@@ -3,7 +3,7 @@
 // pub mod broadcast;
 // pub mod cancel;
 // pub mod echo;
-// pub mod join;
+pub mod join;
 // pub mod mpsc;
 // pub mod oneshot;
 pub mod select;
