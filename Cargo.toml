@@ -24,5 +24,5 @@ members = [
     "x_tokio_axum_cli_chans",
     "x_tokio_http_get", 
     "x_web_server",
-    "x_web_server_async",
+    "x_web_server_async", "x_tokio_cli_tutorial",
     ]
