@@ -466,6 +466,97 @@ future's output with `_`.
 > A subtlety to learn later: a future dropped mid-`.await` loses partial progress,
 > so branches should be "cancel-safe." Fine for sleeps.
 
+### Lesson 3b — `selectchan`: `select!` over channels (the actor pattern)
+
+Racing timers shows the mechanics, but the *real* use of `select!` is
+multiplexing inputs in a long-lived task: handle incoming work **and** watch for
+a shutdown signal, reacting to whichever is ready first. This is the backbone of
+the "actor" pattern in async Rust.
+
+```rust
+// src/lessons/selectchan.rs
+//! select! over an mpsc channel and a shutdown token -- the actor pattern.
+
+use std::time::Duration;
+use tokio::sync::mpsc;
+use tokio::time::sleep;
+use tokio_util::sync::CancellationToken;
+
+pub async fn run() -> anyhow::Result<()> {
+    let (tx, mut rx) = mpsc::channel::<String>(16);
+    let shutdown = CancellationToken::new();
+
+    // A worker that reacts to whichever input is ready first.
+    let child = shutdown.clone();
+    let worker = tokio::spawn(async move {
+        loop {
+            tokio::select! {
+                maybe = rx.recv() => match maybe {
+                    Some(cmd) => println!("worker: handling '{cmd}'"),
+                    None => {
+                        println!("worker: channel closed, exiting");
+                        break;
+                    }
+                },
+                _ = child.cancelled() => {
+                    println!("worker: shutdown requested, draining remaining...");
+                    // try_recv() is non-blocking: empty the buffer instead of
+                    // dropping in-flight work. The recv branch was cancelled,
+                    // but because recv() is cancel-safe these are all still here.
+                    while let Ok(cmd) = rx.try_recv() {
+                        println!("worker: drained '{cmd}'");
+                    }
+                    break;
+                }
+            }
+        }
+    });
+
+    // Feed it some commands, then shut it down.
+    for cmd in ["build", "test", "deploy"] {
+        tx.send(cmd.to_string()).await?;
+        sleep(Duration::from_millis(80)).await;
+    }
+    println!("main: requesting shutdown");
+    shutdown.cancel();
+
+    drop(tx);
+    let _ = worker.await;
+    Ok(())
+}
+```
+
+Three things this shows that the timer-only `select` lesson can't:
+
+1. **`recv()` is cancel-safe.** When the `cancelled()` branch wins, the dropped
+   `rx.recv()` future has *not* pulled a message off the channel — anything
+   queued is still there, which is exactly why the `try_recv()` drain loop can
+   recover it. Cancel-safety is the property that makes channels safe to put in a
+   `select!` branch. (Contrast: `AsyncReadExt::read_exact` is **not** cancel-safe
+   — cancelling it mid-read can lose bytes.)
+2. **The `None` arm is mandatory.** `rx.recv()` returns `Option<T>`: `Some(msg)`
+   per message, then `None` once every sender has dropped. If you wrote
+   `Some(cmd) = rx.recv() => ...` instead and the channel closed, that branch
+   would stop matching and `select!` would re-poll the others — in a `loop` with
+   nothing else live, that's a busy-spin. Matching `None` and `break`ing avoids
+   it.
+3. **Graceful drain.** `try_recv()` is the non-blocking sibling of `recv()`:
+   `Ok(msg)` if one is buffered, `Err` if empty/closed. On shutdown we drain the
+   buffer rather than discard in-flight work.
+
+> **Rust note — `Option` and `Result` patterns.** `rx.recv()` yields
+> `Option<String>` (`Some`/`None`); `rx.try_recv()` yields a `Result`
+> (`Ok`/`Err`). The `match` and `while let` arms here are pattern matching on
+> those two enums — the same machinery as `Result` and the CLI `Lesson` enum.
+
+Running it prints the three commands handled, then the shutdown message. Because
+the commands arrive faster than… actually they're consumed as they arrive, so the
+drain loop usually finds the buffer already empty — try bumping the producer rate
+(remove the `sleep`, or send 100 commands) to see `drained '...'` lines appear.
+
+Wire-up reminder: `pub mod selectchan;` in `mod.rs`, a `SelectChan` enum variant,
+and a `Lesson::SelectChan => lessons::selectchan::run().await` match arm.
+
 ### Lesson 4 — `join`: run concurrently, wait for all
 
 ```rust

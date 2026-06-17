@@ -17,8 +17,9 @@ enum Lesson {
     },
     /// sleep, internal and timeout
     Timers,
-    // /// Race futures conccurently with `select!`
-    // Select,
+    /// Race futures conccurently with `select!`
+    Select,
+    SelectChan,
     // /// Run futures concurretly with join!
     // Join,
     // /// Many-produce, single-consumer channel
@@ -57,7 +58,8 @@ async fn main() -> anyhow::Result<()> {
     match Cli::parse().lesson {
         Lesson::Spawn { tasks } => lessons::spawn::run(tasks).await,
         Lesson::Timers => lessons::timers::run().await,
-        // Lesson::Select => lessons::select::run().await,
+        Lesson::Select => lessons::select::run().await,
+        Lesson::SelectChan => lessons::selectchan::run().await,
         // Lesson::Join => lessons::join::run().await,
         // Lesson::Mpsc { producers } => lessons::mpsc::run(producers).await,
         // Lesson::Oneshot => lessons::oneshot::run().await,

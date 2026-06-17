@@ -6,7 +6,8 @@
 // pub mod join;
 // pub mod mpsc;
 // pub mod oneshot;
-// pub mod select;
+pub mod select;
+pub mod selectchan;
 // pub mod shared_state;
 // pub mod signal;
 pub mod spawn;
