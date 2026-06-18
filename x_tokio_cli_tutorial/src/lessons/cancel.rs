@@ -22,5 +22,10 @@ pub async fn run() -> anyhow::Result<()> {
             }
         }
     });
+
+    sleep(Duration::from_millis(200)).await;
+    println!("main: requesting cancellation");
+    token.cancel();
+    worker.await?;
     Ok(())
 }
