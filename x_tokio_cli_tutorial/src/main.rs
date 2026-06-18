@@ -44,8 +44,8 @@ enum Lesson {
         #[arg(default_value_t = 40)]
         fib: u64,
     },
-    // /// Graceful cancellation with CancellationToken
-    // Cancel,
+    /// Graceful cancellation with CancellationToken
+    Cancel,
     // /// Async streams
     // Streams,
     // /// TCP echo server
@@ -71,7 +71,7 @@ async fn main() -> anyhow::Result<()> {
         Lesson::Watch => lessons::watch::run().await,
         Lesson::SharedState { tasks } => lessons::shared_state::run(tasks).await,
         Lesson::Blocking { fib } => lessons::blocking::run(fib).await,
-        // Lesson::Cancel => lessons::cancel::run().await,
+        Lesson::Cancel => lessons::cancel::run().await,
         // Lesson::Streams => lessons::streams::run().await,
         // Lesson::Echo { addr } => lessons::echo::run(addr).await,
         // Lesson::Signal => lessons::signal::run().await,
