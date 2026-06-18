@@ -5,7 +5,7 @@
 // pub mod echo;
 pub mod join;
 pub mod mpsc;
-// pub mod oneshot;
+pub mod oneshot;
 pub mod select;
 pub mod selectchan;
 // pub mod shared_state;

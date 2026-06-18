@@ -28,8 +28,8 @@ enum Lesson {
         #[arg(default_value_t = 3)]
         producers: u64,
     },
-    // /// Single Request -> response
-    // Oneshot,
+    /// Single Request -> response
+    Oneshot,
     // /// Fan-out to every subscriber
     // Broadcast,
     // /// Propagate the latst state to watchers
@@ -63,7 +63,7 @@ async fn main() -> anyhow::Result<()> {
         Lesson::SelectChan => lessons::selectchan::run().await,
         Lesson::Join => lessons::join::run().await,
         Lesson::Mpsc { producers } => lessons::mpsc::run(producers).await,
-        // Lesson::Oneshot => lessons::oneshot::run().await,
+        Lesson::Oneshot => lessons::oneshot::run().await,
         // Lesson::Broadcast => lessons::broadcast::run().await,
         // Lesson::Watch => lessons::watch::run().await,
         // Lesson::SharedState { tasks } => lessons::shared_state::run(tasks).await,
