@@ -23,11 +23,11 @@ enum Lesson {
     SelectChan,
     /// Run futures concurretly with join!
     Join,
-    // /// Many-produce, single-consumer channel
-    // Mpsc {
-    //     #[arg(default_value_t = 3)]
-    //     producers: u64,
-    // },
+    /// Many-produce, single-consumer channel
+    Mpsc {
+        #[arg(default_value_t = 3)]
+        producers: u64,
+    },
     // /// Single Request -> response
     // Oneshot,
     // /// Fan-out to every subscriber
@@ -62,7 +62,7 @@ async fn main() -> anyhow::Result<()> {
         Lesson::Select => lessons::select::run().await,
         Lesson::SelectChan => lessons::selectchan::run().await,
         Lesson::Join => lessons::join::run().await,
-        // Lesson::Mpsc { producers } => lessons::mpsc::run(producers).await,
+        Lesson::Mpsc { producers } => lessons::mpsc::run(producers).await,
         // Lesson::Oneshot => lessons::oneshot::run().await,
         // Lesson::Broadcast => lessons::broadcast::run().await,
         // Lesson::Watch => lessons::watch::run().await,
