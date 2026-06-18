@@ -16,8 +16,8 @@ pub async fn run(tasks: u64) -> anyhow::Result<()> {
         }))
     }
 
-    for handle in handles {
-        let _ = handle.await?;
+    for h in handles {
+        h.await?;
     }
 
     println!(

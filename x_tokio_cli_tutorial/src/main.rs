@@ -39,8 +39,11 @@ enum Lesson {
         #[arg(default_value_t = 8)]
         tasks: u64,
     },
-    // // Offload blocking work with spawn_blocking
-    // Blocking,
+    // Offload blocking work with spawn_blocking
+    Blocking {
+        #[arg(default_value_t = 40)]
+        fib: u64,
+    },
     // /// Graceful cancellation with CancellationToken
     // Cancel,
     // /// Async streams
@@ -67,7 +70,7 @@ async fn main() -> anyhow::Result<()> {
         Lesson::Broadcast => lessons::broadcast::run().await,
         Lesson::Watch => lessons::watch::run().await,
         Lesson::SharedState { tasks } => lessons::shared_state::run(tasks).await,
-        // Lesson::Blocking => lessons::blocking::run().await,
+        Lesson::Blocking { fib } => lessons::blocking::run(fib).await,
         // Lesson::Cancel => lessons::cancel::run().await,
         // Lesson::Streams => lessons::streams::run().await,
         // Lesson::Echo { addr } => lessons::echo::run(addr).await,
