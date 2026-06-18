@@ -32,8 +32,8 @@ enum Lesson {
     Oneshot,
     /// Fan-out to every subscriber
     Broadcast,
-    // /// Propagate the latst state to watchers
-    // Watch,
+    /// Propagate the latst state to watchers
+    Watch,
     // /// Share a counter across tasks with Arc<Mutex>
     // SharedState {
     //     #[arg(default_value_t = 8)]
@@ -65,7 +65,7 @@ async fn main() -> anyhow::Result<()> {
         Lesson::Mpsc { producers } => lessons::mpsc::run(producers).await,
         Lesson::Oneshot => lessons::oneshot::run().await,
         Lesson::Broadcast => lessons::broadcast::run().await,
-        // Lesson::Watch => lessons::watch::run().await,
+        Lesson::Watch => lessons::watch::run().await,
         // Lesson::SharedState { tasks } => lessons::shared_state::run(tasks).await,
         // Lesson::Blocking => lessons::blocking::run().await,
         // Lesson::Cancel => lessons::cancel::run().await,

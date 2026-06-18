@@ -13,4 +13,4 @@ pub mod selectchan;
 pub mod spawn;
 // pub mod streams;
 pub mod timers;
-// pub mod watch;
+pub mod watch;
