@@ -4,6 +4,7 @@ use tokio::time::sleep;
 
 async fn fetch(name: &str, ms: u64) -> String {
     sleep(Duration::from_millis(ms)).await;
+    println!("fetched: {name} ({ms}ms)");
     format!("{name} ({ms}ms)")
 }
 
