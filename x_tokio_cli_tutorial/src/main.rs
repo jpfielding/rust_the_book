@@ -48,11 +48,11 @@ enum Lesson {
     Cancel,
     /// Async streams
     Streams,
-    // /// TCP echo server
-    // Echo {
-    //     #[arg(default_value = "127.0.0.1:8080")]
-    //     addr: String,
-    // },
+    /// TCP echo server
+    Echo {
+        #[arg(default_value = "127.0.0.1:8080")]
+        addr: String,
+    },
     // /// Graceful shutdown on Ctrl-C
     // Signal,
 }
@@ -73,7 +73,7 @@ async fn main() -> anyhow::Result<()> {
         Lesson::Blocking { fib } => lessons::blocking::run(fib).await,
         Lesson::Cancel => lessons::cancel::run().await,
         Lesson::Streams => lessons::streams::run().await,
-        // Lesson::Echo { addr } => lessons::echo::run(addr).await,
+        Lesson::Echo { addr } => lessons::echo::run(addr).await,
         // Lesson::Signal => lessons::signal::run().await,
     }
 }
