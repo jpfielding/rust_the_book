@@ -46,8 +46,8 @@ enum Lesson {
     },
     /// Graceful cancellation with CancellationToken
     Cancel,
-    // /// Async streams
-    // Streams,
+    /// Async streams
+    Streams,
     // /// TCP echo server
     // Echo {
     //     #[arg(default_value = "127.0.0.1:8080")]
@@ -72,7 +72,7 @@ async fn main() -> anyhow::Result<()> {
         Lesson::SharedState { tasks } => lessons::shared_state::run(tasks).await,
         Lesson::Blocking { fib } => lessons::blocking::run(fib).await,
         Lesson::Cancel => lessons::cancel::run().await,
-        // Lesson::Streams => lessons::streams::run().await,
+        Lesson::Streams => lessons::streams::run().await,
         // Lesson::Echo { addr } => lessons::echo::run(addr).await,
         // Lesson::Signal => lessons::signal::run().await,
     }

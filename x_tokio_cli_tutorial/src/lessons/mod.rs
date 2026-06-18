@@ -11,6 +11,6 @@ pub mod selectchan;
 pub mod shared_state;
 // pub mod signal;
 pub mod spawn;
-// pub mod streams;
+pub mod streams;
 pub mod timers;
 pub mod watch;
