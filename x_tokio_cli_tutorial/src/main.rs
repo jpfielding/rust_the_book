@@ -53,8 +53,8 @@ enum Lesson {
         #[arg(default_value = "127.0.0.1:8080")]
         addr: String,
     },
-    // /// Graceful shutdown on Ctrl-C
-    // Signal,
+    /// Graceful shutdown on Ctrl-C
+    Signal,
 }
 
 #[tokio::main]
@@ -74,6 +74,6 @@ async fn main() -> anyhow::Result<()> {
         Lesson::Cancel => lessons::cancel::run().await,
         Lesson::Streams => lessons::streams::run().await,
         Lesson::Echo { addr } => lessons::echo::run(addr).await,
-        // Lesson::Signal => lessons::signal::run().await,
+        Lesson::Signal => lessons::signal::run().await,
     }
 }
