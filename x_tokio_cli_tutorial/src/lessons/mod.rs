@@ -8,7 +8,7 @@ pub mod mpsc;
 pub mod oneshot;
 pub mod select;
 pub mod selectchan;
-// pub mod shared_state;
+pub mod shared_state;
 // pub mod signal;
 pub mod spawn;
 // pub mod streams;

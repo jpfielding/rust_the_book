@@ -34,11 +34,11 @@ enum Lesson {
     Broadcast,
     /// Propagate the latst state to watchers
     Watch,
-    // /// Share a counter across tasks with Arc<Mutex>
-    // SharedState {
-    //     #[arg(default_value_t = 8)]
-    //     tasks: u64,
-    // },
+    /// Share a counter across tasks with Arc<Mutex>
+    SharedState {
+        #[arg(default_value_t = 8)]
+        tasks: u64,
+    },
     // // Offload blocking work with spawn_blocking
     // Blocking,
     // /// Graceful cancellation with CancellationToken
@@ -66,7 +66,7 @@ async fn main() -> anyhow::Result<()> {
         Lesson::Oneshot => lessons::oneshot::run().await,
         Lesson::Broadcast => lessons::broadcast::run().await,
         Lesson::Watch => lessons::watch::run().await,
-        // Lesson::SharedState { tasks } => lessons::shared_state::run(tasks).await,
+        Lesson::SharedState { tasks } => lessons::shared_state::run(tasks).await,
         // Lesson::Blocking => lessons::blocking::run().await,
         // Lesson::Cancel => lessons::cancel::run().await,
         // Lesson::Streams => lessons::streams::run().await,
