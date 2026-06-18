@@ -11,7 +11,7 @@ COPY cas.pem /etc/pki/ca-trust/source/anchors/custom_cas.pem
 RUN update-ca-trust
 
 RUN dnf install -y epel-release && dnf -y update
-RUN dnf install -y curl-minimal git iproute iputils jq make openssl sudo wget which zip zsh \
+RUN dnf install -y curl-minimal git iproute iputils jq make openssl sudo wget which nmap-ncat zip zsh \
     gcc gcc-c++ pkgconfig openssl-devel
 
 # GitHub CLI

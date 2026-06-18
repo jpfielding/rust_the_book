@@ -23,6 +23,10 @@ pub async fn run(addr: String) -> anyhow::Result<()> {
                         break;
                     }
                     Ok(n) => {
+                        println!(
+                            "received from {peer}: {}",
+                            String::from_utf8_lossy(&buf[..n])
+                        );
                         if let Err(e) = socket.write_all(&buf[..n]).await {
                             eprintln!("failed to write to {peer}: {e}");
                             break;
