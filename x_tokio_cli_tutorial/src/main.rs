@@ -30,8 +30,8 @@ enum Lesson {
     },
     /// Single Request -> response
     Oneshot,
-    // /// Fan-out to every subscriber
-    // Broadcast,
+    /// Fan-out to every subscriber
+    Broadcast,
     // /// Propagate the latst state to watchers
     // Watch,
     // /// Share a counter across tasks with Arc<Mutex>
@@ -64,7 +64,7 @@ async fn main() -> anyhow::Result<()> {
         Lesson::Join => lessons::join::run().await,
         Lesson::Mpsc { producers } => lessons::mpsc::run(producers).await,
         Lesson::Oneshot => lessons::oneshot::run().await,
-        // Lesson::Broadcast => lessons::broadcast::run().await,
+        Lesson::Broadcast => lessons::broadcast::run().await,
         // Lesson::Watch => lessons::watch::run().await,
         // Lesson::SharedState { tasks } => lessons::shared_state::run(tasks).await,
         // Lesson::Blocking => lessons::blocking::run().await,

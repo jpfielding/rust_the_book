@@ -1,6 +1,6 @@
 // src/lessons/mod.rs
 // pub mod blocking;
-// pub mod broadcast;
+pub mod broadcast;
 // pub mod cancel;
 // pub mod echo;
 pub mod join;
