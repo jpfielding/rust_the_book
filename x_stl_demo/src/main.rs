@@ -51,11 +51,7 @@ pub enum Op {
 #[derive(Clone, Debug)]
 pub enum Formula {
     /// `channel op bound`, e.g. `speed > 60`.
-    Atom {
-        channel: String,
-        op: Op,
-        bound: f64,
-    },
+    Atom { channel: String, op: Op, bound: f64 },
     /// Logical negation of a subformula.
     Not(Box<Formula>),
     /// Conjunction: satisfied iff every child is satisfied.
@@ -271,7 +267,7 @@ fn temps() {
             .collect(),
     );
 
-    let mut tr = Trace { 0: HashMap::new() };
+    let mut tr = Trace(HashMap::new());
     tr.0.insert("temp".into(), temp);
 
     let safe = Formula::Atom {
