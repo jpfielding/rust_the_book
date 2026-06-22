@@ -33,10 +33,8 @@ impl Signal {
     }
 }
 
-/// An STL formula is either an atomic formula, a negation, a conjunction, or a disjunction. We can also define implication as a derived operator.
-#[derive(Clone, Copy, Debug, PartialEq)]
-
 /// The comparison operator for an atomic formula.
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Op {
     Gt,
     Lt,
@@ -44,81 +42,106 @@ pub enum Op {
     Le,
 }
 
-/// The robustness of a formula at time t is a real number that indicates how strongly the formula is satisfied or violated at time t. A positive robustness means the formula is satisfied, a negative robustness means it is violated, and the magnitude indicates how strongly it is satisfied or violated.
-pub trait Formula {
-    fn robustness(&self, tr: &Trace, t: DateTime<Utc>) -> f64;
+/// An STL formula is a closed, recursive syntax tree. The variants cover atomic
+/// comparisons, the boolean connectives (negation, conjunction, disjunction), and
+/// the bounded temporal operators (always, eventually). Implication is a derived
+/// operator built from negation and disjunction (see [`implies`]).
+///
+/// Recursive variants box their children so the enum has a finite size.
+#[derive(Clone, Debug)]
+pub enum Formula {
+    /// `channel op bound`, e.g. `speed > 60`.
+    Atom {
+        channel: String,
+        op: Op,
+        bound: f64,
+    },
+    /// Logical negation of a subformula.
+    Not(Box<Formula>),
+    /// Conjunction: satisfied iff every child is satisfied.
+    And(Vec<Formula>),
+    /// Disjunction: satisfied iff at least one child is satisfied.
+    Or(Vec<Formula>),
+    /// `always` over the relative window `[a, b]`: the subformula must hold at
+    /// every sample time in the window.
+    Always {
+        a: Duration,
+        b: Duration,
+        f: Box<Formula>,
+    },
+    /// `eventually` over the relative window `[a, b]`: the subformula must hold at
+    /// some sample time in the window.
+    Eventually {
+        a: Duration,
+        b: Duration,
+        f: Box<Formula>,
+    },
 }
 
-/// An atomic formula is of the form "channel op bound", where op is a comparison operator (>, <, >=, <=) and bound is a real number. The robustness of an atomic formula is the distance of the signal value to the threshold, with the sign determined by whether the formula is satisfied or not.
-pub struct Atom {
-    pub channel: String,
-    pub op: Op,
-    pub bound: f64,
-}
-
-/// Robustness of an atomic formula is the distance of the signal value to the threshold, with the sign determined by whether the formula is satisfied or not.
-impl Formula for Atom {
-    fn robustness(&self, tr: &Trace, t: DateTime<Utc>) -> f64 {
-        let Some(sig) = tr.0.get(&self.channel) else {
-            return f64::NEG_INFINITY;
-        };
-        let Some(v) = sig.at(t) else {
-            return f64::NEG_INFINITY;
-        };
-        match self.op {
-            Op::Gt | Op::Ge => v - self.bound,
-            Op::Lt | Op::Le => self.bound - v,
+impl Formula {
+    /// The robustness of a formula at time `t` is a real number indicating how
+    /// strongly the formula is satisfied or violated there. Positive means
+    /// satisfied, negative means violated, and the magnitude is the margin.
+    ///
+    /// - **Atom**: signed distance of the signal value to the threshold. A missing
+    ///   channel or sample yields `-inf` (definitively violated).
+    /// - **Not**: negation of the child's robustness.
+    /// - **And**: minimum over the children (weakest link).
+    /// - **Or**: maximum over the children (strongest witness).
+    /// - **Always**: minimum of the subformula over the sample times in the window;
+    ///   `+inf` if the window is empty (vacuously satisfied).
+    /// - **Eventually**: maximum of the subformula over the sample times in the
+    ///   window; `-inf` if the window is empty.
+    pub fn robustness(&self, tr: &Trace, t: DateTime<Utc>) -> f64 {
+        match self {
+            Formula::Atom { channel, op, bound } => {
+                let Some(sig) = tr.0.get(channel) else {
+                    return f64::NEG_INFINITY;
+                };
+                let Some(v) = sig.at(t) else {
+                    return f64::NEG_INFINITY;
+                };
+                match op {
+                    Op::Gt | Op::Ge => v - bound,
+                    Op::Lt | Op::Le => bound - v,
+                }
+            }
+            Formula::Not(f) => -f.robustness(tr, t),
+            Formula::And(children) => children
+                .iter()
+                .map(|c| c.robustness(tr, t))
+                .fold(f64::INFINITY, f64::min),
+            Formula::Or(children) => children
+                .iter()
+                .map(|c| c.robustness(tr, t))
+                .fold(f64::NEG_INFINITY, f64::max),
+            Formula::Always { a, b, f } => {
+                let times = tr.sample_times_in_window(t + *a, t + *b);
+                if times.is_empty() {
+                    return f64::INFINITY;
+                }
+                times
+                    .into_iter()
+                    .map(|tau| f.robustness(tr, tau))
+                    .fold(f64::INFINITY, f64::min)
+            }
+            Formula::Eventually { a, b, f } => {
+                let times = tr.sample_times_in_window(t + *a, t + *b);
+                if times.is_empty() {
+                    return f64::NEG_INFINITY;
+                }
+                times
+                    .into_iter()
+                    .map(|tau| f.robustness(tr, tau))
+                    .fold(f64::NEG_INFINITY, f64::max)
+            }
         }
     }
 }
 
-/// Negation of a formula is satisfied if and only if the original formula is not satisfied, so the robustness of a negation is the negative of the robustness of the negated formula.
-pub struct Not {
-    pub f: Box<dyn Formula>,
-}
-
-/// Robustness of negation is the negative of the robustness of the negated formula.
-impl Formula for Not {
-    fn robustness(&self, tr: &Trace, t: DateTime<Utc>) -> f64 {
-        -self.f.robustness(tr, t)
-    }
-}
-
-/// A conjunction is satisfied if and only if all of its conjuncts are satisfied, so the robustness of a conjunction is the minimum of the robustness of its conjuncts.
-pub struct And {
-    pub children: Vec<Box<dyn Formula>>,
-}
-
-/// Robustness of conjunction is the minimum of the robustness of the conjuncts.
-impl Formula for And {
-    fn robustness(&self, tr: &Trace, t: DateTime<Utc>) -> f64 {
-        self.children
-            .iter()
-            .map(|c| c.robustness(tr, t))
-            .fold(f64::INFINITY, f64::min)
-    }
-}
-
-/// A disjunction is satisfied if and only if at least one of its disjuncts is satisfied, so the robustness of a disjunction is the maximum of the robustness of its disjuncts.
-pub struct Or {
-    pub children: Vec<Box<dyn Formula>>,
-}
-
-/// Robustness of an OR is the max of the robustness of its children.
-impl Formula for Or {
-    fn robustness(&self, tr: &Trace, t: DateTime<Utc>) -> f64 {
-        self.children
-            .iter()
-            .map(|c| c.robustness(tr, t))
-            .fold(f64::NEG_INFINITY, f64::max)
-    }
-}
-
-/// p -> q is equivalent to !p or q
-pub fn implies(p: Box<dyn Formula>, q: Box<dyn Formula>) -> Or {
-    Or {
-        children: vec![Box::new(Not { f: p }), q],
-    }
+/// `p -> q` is equivalent to `!p || q`.
+pub fn implies(p: Formula, q: Formula) -> Formula {
+    Formula::Or(vec![Formula::Not(Box::new(p)), q])
 }
 
 /// Returns a sorted list of all sample times in the trace that are within the given time window.
@@ -140,56 +163,9 @@ impl Trace {
     }
 }
 
-/// An always formula is satisfied if and only if the subformula is satisfied at all times in the given time window,
-/// so the robustness of an always formula is the minimum of the robustness of the subformula at all times in the time window.
-pub struct Always {
-    pub a: Duration,
-    pub b: Duration,
-    pub f: Box<dyn Formula>,
-}
-
-/// Robustness of an always formula is the minimum of the robustness of the subformula at all times in the time window.
-/// We can compute this by first finding all sample times in the trace that are within the time window, and then taking
-/// the minimum robustness of the subformula at those times. If there are no sample times in the time window, we can
-/// return positive infinity, since the formula is vacuously satisfied.
-impl Formula for Always {
-    fn robustness(&self, tr: &Trace, t: DateTime<Utc>) -> f64 {
-        let times = tr.sample_times_in_window(t + self.a, t + self.b);
-        if times.is_empty() {
-            return f64::INFINITY;
-        }
-        times
-            .into_iter()
-            .map(|tau| self.f.robustness(tr, tau))
-            .fold(f64::INFINITY, f64::min)
-    }
-}
-
-/// An eventually formula is satisfied if and only if the subformula is satisfied at some time in the given time window,
-/// so the robustness of an eventually formula is the maximum of the robustness of the subformula at all times in the time window.
-pub struct Eventually {
-    pub a: Duration,
-    pub b: Duration,
-    pub f: Box<dyn Formula>,
-}
-
-/// Robustness of an eventually formula is the maximum of the robustness of the subformula at all times in the time window.
-impl Formula for Eventually {
-    fn robustness(&self, tr: &Trace, t: DateTime<Utc>) -> f64 {
-        let times = tr.sample_times_in_window(t + self.a, t + self.b);
-        if times.is_empty() {
-            return f64::NEG_INFINITY;
-        }
-        times
-            .into_iter()
-            .map(|tau| self.f.robustness(tr, tau))
-            .fold(f64::NEG_INFINITY, f64::max)
-    }
-}
-
 /// Evaluates the robustness of the formula at all sample times in the trace, and returns a signal of the robustness
 /// values at those times.
-pub fn evaluate_along(spec: &dyn Formula, tr: &Trace, times: &[DateTime<Utc>]) -> Signal {
+pub fn evaluate_along(spec: &Formula, tr: &Trace, times: &[DateTime<Utc>]) -> Signal {
     let samples = times
         .iter()
         .map(|&t| Sample {
@@ -250,24 +226,24 @@ fn cars() {
     tr.0.insert("brake".to_string(), Signal(brake));
 
     // "Always between 0 and 1 s, if speed > 60 then eventually within 500 ms brake > 0.5"
-    let spec = Always {
+    let spec = Formula::Always {
         a: Duration::zero(),
         b: Duration::milliseconds(1000),
         f: Box::new(implies(
-            Box::new(Atom {
+            Formula::Atom {
                 channel: "speed".into(),
                 op: Op::Gt,
                 bound: 60.0,
-            }),
-            Box::new(Eventually {
+            },
+            Formula::Eventually {
                 a: Duration::zero(),
                 b: Duration::milliseconds(500),
-                f: Box::new(Atom {
+                f: Box::new(Formula::Atom {
                     channel: "brake".into(),
                     op: Op::Gt,
                     bound: 0.5,
                 }),
-            }),
+            },
         )),
     };
     let sec = |n: i64| t0 + Duration::seconds(n);
@@ -298,14 +274,14 @@ fn temps() {
     let mut tr = Trace { 0: HashMap::new() };
     tr.0.insert("temp".into(), temp);
 
-    let safe = Atom {
+    let safe = Formula::Atom {
         channel: "temp".into(),
         op: Op::Lt,
         bound: 30.0,
     };
 
     // "For the next 5 s, temp stays below 30 °C."
-    let always_safe = Always {
+    let always_safe = Formula::Always {
         a: Duration::seconds(0),
         b: Duration::seconds(5),
         f: Box::new(safe),
