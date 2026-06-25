@@ -7,6 +7,7 @@ pub mod join;
 pub mod mpsc;
 pub mod oneshot;
 pub mod select;
+pub mod select_stream;
 pub mod selectchan;
 pub mod shared_state;
 pub mod signal;
