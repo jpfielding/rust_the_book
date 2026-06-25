@@ -2,9 +2,9 @@
 use tokio_stream::{self as stream, StreamExt};
 
 pub async fn run() -> anyhow::Result<()> {
-    let mut s1 = stream::iter(vec![1, 2, 3]);
-    let mut s2 = stream::iter(vec![4, 5, 6]);
-    let mut s3 = stream::iter(vec![7, 8, 9]);
+    let mut s1 = stream::iter(1..3);
+    let mut s2 = stream::iter(4..7);
+    let mut s3 = stream::iter(7..10);
 
     // Use select! to await the next value from either stream
     let next = tokio::select! {
