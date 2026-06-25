@@ -9,7 +9,11 @@ async fn fetch(name: &str, ms: u64) -> String {
 }
 
 pub async fn run() -> anyhow::Result<()> {
-    let (a, b, c) = tokio::join!(fetch("a", 150), fetch("b", 100), fetch("c", 200),);
+    let (a, b, c) = tokio::join!(
+        fetch("a", fastrand::u64(1..=300)),
+        fetch("b", fastrand::u64(1..=300)),
+        fetch("c", fastrand::u64(1..=300)),
+    );
     println!("results: {a}, {b}, {c}");
     Ok(())
 }
