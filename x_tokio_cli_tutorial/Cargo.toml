@@ -9,3 +9,4 @@ clap = { version = "4.6.1", features = ["derive"] }
 tokio = { version = "1.52.3", features = ["full"] }
 tokio-stream = "0.1"
 tokio-util = "0.7"
+fastrand = "2.3"

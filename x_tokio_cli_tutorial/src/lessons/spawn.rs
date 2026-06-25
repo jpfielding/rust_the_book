@@ -7,8 +7,9 @@ pub async fn run(tasks: u64) -> anyhow::Result<()> {
 
     for id in 0..tasks {
         let handle = tokio::spawn(async move {
-            // Finish in reverse order so you can see them interleave
-            sleep(Duration::from_millis(100 * (tasks - id))).await;
+            let delta = fastrand::u64(1..=100);
+            // Finish in random order so you can see them interleave
+            sleep(Duration::from_millis(100 * delta)).await;
             println!("task {id} done");
             id * id
         });
