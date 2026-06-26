@@ -40,4 +40,46 @@ fn main() {
         _ => 1, //  not false
     };
     println!("{} -> {}", boolean, binary);
+
+    // guarded match arms
+    #[allow(dead_code)]
+    enum Temperature {
+        Celsius(u8),
+        Fahrenheit(u8),
+    }
+    let temperature = Temperature::Celsius(number);
+    match temperature {
+        Temperature::Celsius(t) if t > 30 => println!("{}C is above 30 Celsius", t),
+        // The `if condition` part ^ is a guard
+        Temperature::Celsius(t) => println!("{}C is equal to or below 30 Celsius", t),
+
+        Temperature::Fahrenheit(t) if t > 86 => println!("{}F is above 86 Fahrenheit", t),
+        Temperature::Fahrenheit(t) => println!("{}F is equal to or below 86 Fahrenheit", t),
+    }
+
+    // Destructuring
+    let triple = (0, -2, 3);
+    // TODO ^ Try different values for `triple`
+    println!("Tell me about {:?}", triple);
+    // Match can be used to destructure a tuple
+    match triple {
+        // Destructure the second and third elements
+        (0, y, z) => println!("First is `0`, `y` is {:?}, and `z` is {:?}", y, z),
+        (1, ..) => println!("First is `1` and the rest doesn't matter"),
+        (.., 2) => println!("last is `2` and the rest doesn't matter"),
+        (3, .., 4) => println!("First is `3`, last is `4`, and the rest doesn't matter"),
+        // `..` can be used to ignore the rest of the tuple
+        _ => println!("It doesn't matter what they are"),
+        // `_` means don't bind the value to a variable
+    }
+
+    // binding n @ pattern gives us a match but also a variable we can use in the arm
+    match Some(number) {
+        Some(n @ 1..=12) => println!("a number between 1 and 12: {}", n),
+        Some(n @ 42) => println!("The Answer: {}!", n),
+        // Match any other number.
+        Some(n) => println!("Not interesting... {}", n),
+        // Match anything else (`None` variant).
+        _ => (),
+    }
 }
