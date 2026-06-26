@@ -6390,6 +6390,13 @@ name = "x_card_payment"
 version = "0.1.0"
 
 [[package]]
+name = "x_match_examples"
+version = "0.1.0"
+dependencies = [
+ "clap",
+]
+
+[[package]]
 name = "x_stl_horizon_dichotomy"
 version = "0.1.0"
 
