@@ -1,0 +1,6 @@
+{
+  "name": "echo",
+  "description": "Echoes the run's input back as output.",
+  "command": ["bash", "-c", "echo \"$SKILL_INPUT\""],
+  "timeout_secs": 5
+}

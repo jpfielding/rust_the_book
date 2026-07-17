@@ -3872,6 +3872,18 @@ name = "proj_orgtree"
 version = "0.1.0"
 
 [[package]]
+name = "proj_skill_server"
+version = "0.1.0"
+dependencies = [
+ "axum",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-stream",
+ "tokio-util",
+]
+
+[[package]]
 name = "pulp"
 version = "0.22.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"

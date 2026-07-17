@@ -32,4 +32,5 @@ members = [
     "proj_kvstore",
     "proj_logscan",
     "proj_orgtree",
+    "proj_skill_server",
     ]

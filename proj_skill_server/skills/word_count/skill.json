@@ -1,0 +1,6 @@
+{
+  "name": "word_count",
+  "description": "Counts the words in the run's input.",
+  "command": ["bash", "-c", "echo \"$SKILL_INPUT\" | wc -w"],
+  "timeout_secs": 5
+}
