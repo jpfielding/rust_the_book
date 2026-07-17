@@ -1,0 +1,10 @@
+Just before sunrise, the horizon glows faintly orange while the rest of
+the sky is still deep blue. Astronomers call this the civil twilight
+band, and it is short-lived at the equator, longer near the poles.
+
+Ancient navigators measured the angle between a star and the horizon to
+figure out how far north or south they had traveled. No thread of modern
+electronics was involved — just a sextant, a steady hand, and patience.
+
+Some telescopes today are networked through a shared channel so several
+observatories can compare notes on the same patch of sky in real time.

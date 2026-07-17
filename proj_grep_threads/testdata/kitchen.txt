@@ -1,0 +1,10 @@
+Grandpa's kitchen had a single narrow window facing east, so the first
+light of day always spilled in low, right along the horizon of the
+counter tiles.
+
+He kept a spool of kitchen thread in the drawer for trussing a chicken or
+mending a torn apron, always within reach of the cutting board.
+
+None of this had anything to do with computers, but he liked to joke that
+a busy kitchen was just a thread pool with knives: everyone pulling work
+off the same channel, nobody stepping on anyone else's toes.

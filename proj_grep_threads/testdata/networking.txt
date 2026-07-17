@@ -1,0 +1,10 @@
+A network engineer thinks about a channel differently than a sailor does.
+Here, a channel is a path for messages, not water, but the same word
+survives because the idea of "a narrow way for something to flow" never
+really changes.
+
+Every incoming connection gets handed to a worker thread from a pool.
+The pool exists so the main thread never blocks waiting on slow clients.
+
+When the last channel handle is dropped, any thread still listening on the
+other end wakes up, sees no more senders, and exits its loop cleanly.

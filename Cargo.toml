@@ -26,4 +26,10 @@ members = [
     "x_web_server",
     "x_web_server_async", "x_tokio_cli_tutorial", "x_match_examples", "x_axum_tokio_app_chans",
     "x_csp_tokio",
+    "proj_expr_calc",
+    "proj_grep_threads",
+    "proj_iterkit",
+    "proj_kvstore",
+    "proj_logscan",
+    "proj_orgtree",
     ]
