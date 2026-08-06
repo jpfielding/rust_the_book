@@ -3,7 +3,8 @@
     "rust-analyzer.cargo.allFeatures": true,
     "[rust]": {
         "editor.formatOnSave": true,
-        "editor.defaultFormatter": "rust-lang.rust-analyzer"
+        "editor.defaultFormatter": "rust-lang.rust-analyzer",
+        "editor.inlayHints.enabled": "offUnlessPressed"
     },
     "extensions.ignoreRecommendations": true,
     "terminal.integrated.profiles.linux": {

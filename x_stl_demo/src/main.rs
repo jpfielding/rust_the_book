@@ -181,7 +181,7 @@ fn cars() {
     println!("Cars example:");
     let t0 = DateTime::<Utc>::from_timestamp(0, 0).unwrap();
     let ms = |n: i64| t0 + Duration::milliseconds(n);
-    let mut tr = Trace { 0: HashMap::new() };
+    let mut tr = Trace( HashMap::new());
     #[rustfmt::skip]
     let speed = vec![
         // phase 1 — speeding, no brake
