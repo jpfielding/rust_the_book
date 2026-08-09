@@ -37,7 +37,7 @@ fn speed_brakes(_sb: f64, _bb: f64) -> Result<(), String> {
     let t0 = DateTime::<Utc>::from_timestamp(0, 0).unwrap();
     let ms = |n: i64| t0 + chrono::Duration::milliseconds(n);
     #[rustfmt::skip]
-    let _speed = vec![
+    let speed = vec![
         // phase 1 — speeding, no brake
         Sample { t: ms(0),    v: 70.0 },
         Sample { t: ms(300),  v: 70.0 },
@@ -55,7 +55,7 @@ fn speed_brakes(_sb: f64, _bb: f64) -> Result<(), String> {
         Sample { t: ms(6000), v: 40.0 },
     ];
     #[rustfmt::skip]
-    let _brake = vec![
+    let brake = vec![
         // phase 1
         Sample { t: ms(0),    v: 0.0  },
         Sample { t: ms(300),  v: 0.0  },
@@ -89,15 +89,21 @@ fn speed_brakes(_sb: f64, _bb: f64) -> Result<(), String> {
             }),
         )),
     };
-    let sec = |n: i64| t0 + chrono::Duration::seconds(n);
-    let times: Vec<DateTime<Utc>> = (0..=6).map(sec).collect();
+    let mut times = Vec::new();
+    // let sec = |n: i64| t0 + chrono::Duration::seconds(n);
+    // let times: Vec<DateTime<Utc>> = (0..=6).map(sec).collect();
+    times.extend(speed.iter().map(|s| s.t));
+    times.extend(brake.iter().map(|s| s.t));
+    times.sort_unstable();
+    times.dedup();
     let trace = Trace(HashMap::from([
-        ("speed".to_string(), Signal(_speed)),
-        ("brake".to_string(), Signal(_brake)),
+        ("speed".to_string(), Signal(speed)),
+        ("brake".to_string(), Signal(brake)),
     ]));
     for t in times {
         let r = spec.robustness(&trace, t);
-        println!("robustness at {t:?} = {r}");
+        let i = t - t0;
+        println!("robustness at {i:?} = {r}");
     }
     Ok(())
 }
