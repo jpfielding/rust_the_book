@@ -73,6 +73,32 @@ fn speed_brakes(_sb: f64, _bb: f64) -> Result<(), String> {
         Sample { t: ms(6000), v: 0.0  },
     ];
 
+    let spec = Formula::Historically {
+        a: Duration::milliseconds(0),
+        b: Duration::milliseconds(500),
+        f: Box::new(Formula::Implies(
+            Box::new(Formula::Atom {
+                channel: "speed".to_string(),
+                op: Op::GT,
+                value: 65.0,
+            }),
+            Box::new(Formula::Atom {
+                channel: "brake".to_string(),
+                op: Op::GE,
+                value: 0.5,
+            }),
+        )),
+    };
+    let sec = |n: i64| t0 + chrono::Duration::seconds(n);
+    let times: Vec<DateTime<Utc>> = (0..=6).map(sec).collect();
+    let trace = Trace(HashMap::from([
+        ("speed".to_string(), Signal(_speed)),
+        ("brake".to_string(), Signal(_brake)),
+    ]));
+    for t in times {
+        let r = spec.robustness(&trace, t);
+        println!("robustness at {t:?} = {r}");
+    }
     Ok(())
 }
 
