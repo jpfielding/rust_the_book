@@ -102,8 +102,8 @@ fn speed_brakes(_sb: f64, _bb: f64) -> Result<(), String> {
     ]));
     for t in times {
         let r = spec.robustness(&trace, t);
-        let i = t - t0;
-        println!("robustness at {i:?} = {r}");
+        let td = (t - t0).num_milliseconds();
+        println!("robustness at {td:?} = {r}");
     }
     Ok(())
 }
