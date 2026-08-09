@@ -886,6 +886,7 @@ checksum = "c673075a2e0e5f4a1dde27ce9dee1ea4558c7ffe648f576438a20ca1d2acc4b0"
 dependencies = [
  "iana-time-zone",
  "num-traits",
+ "serde",
  "windows-link",
 ]
 
@@ -6452,6 +6453,14 @@ dependencies = [
 name = "x_match_examples"
 version = "0.1.0"
 dependencies = [
+ "clap",
+]
+
+[[package]]
+name = "x_stl_blind"
+version = "0.1.0"
+dependencies = [
+ "chrono",
  "clap",
 ]
 

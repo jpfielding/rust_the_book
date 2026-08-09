@@ -13,6 +13,7 @@ members = [
     "x_card_payment", 
     "x_sig_tokio",
     "x_stl_ast_demo",
+    "x_stl_blind", 
     "x_stl_demo", 
     "x_stl_horizon_dichotomy", 
     "x_sig_nix",
