@@ -93,8 +93,8 @@ fn router(state: AppState) -> Router {
         .with_state(state)
 }
 
-pub async fn healthz() -> StatusCode {
-    StatusCode::OK
+pub async fn healthz() -> &'static str {
+    "ok"
 }
 
 pub async fn readyz() -> StatusCode {
