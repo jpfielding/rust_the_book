@@ -39,7 +39,7 @@ struct Message {
 }
 
 async fn run(cli: Cli) -> Result<(), String> {
-    let port: u16 = cli.port.parse().expect("invalid port number");
+    let port: u16 = cli.port.parse().map_err(|_| "invalid port number")?;
 
     let bind = format!("0.0.0.0:{}", port);
 
