@@ -29,7 +29,7 @@ enum Currency {
 #[derive(Debug)]
 struct Payment {
     amount: PaymentAmount,
-    currency: Currency, 
+    currency: Currency,
     method: PaymentMethod,
 }
 
@@ -41,15 +41,15 @@ impl PrintDetails for Payment {
     fn payment_info(&self) -> String {
         let method = match &self.method {
             PaymentMethod::Cash => String::from("cash"),
-            PaymentMethod::Check(c) => format!("a check with a number {:?}",c),
+            PaymentMethod::Check(c) => format!("a check with a number {:?}", c),
             PaymentMethod::Card(c) => format!("a check {} with a credit card {}", c.0, c.1),
         };
         format!(
-            "An Amount of {}, was paid in {:?} using {}", &self.amount, &self.currency, method
+            "An Amount of {}, was paid in {:?} using {}",
+            self.amount, self.currency, method
         )
     }
 }
-
 
 fn main() {
     let cc_payment = Payment {
