@@ -67,8 +67,9 @@ RUN set -eux && \
 
 # rust
 COPY --chown=${USERNAME}:${USERNAME} .bash_pretty ${HOME}/.bash_rust
-RUN set -eux && \
-    echo "source ${HOME}/.bash_rust" >> ${HOME}/.bashrc
+ARG RUST_VERSION=1.99.0
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
+        bash -s -- -y --default-toolchain ${RUST_VERSION} --profile minimal -c rustfmt,clippy
 
 # starship — config lives outside ~/.config because that dir is bind-mounted from the host
 RUN set -eux && \
