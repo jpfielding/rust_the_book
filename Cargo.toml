@@ -33,5 +33,5 @@ members = [
     "proj_kvstore",
     "proj_logscan",
     "proj_orgtree",
-    "proj_skill_server",
+    "proj_skill_server", "x_tokio_simd",
     ]
