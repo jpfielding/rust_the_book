@@ -67,7 +67,7 @@ RUN set -eux && \
 
 # rust
 COPY --chown=${USERNAME}:${USERNAME} .bash_pretty ${HOME}/.bash_rust
-ARG RUST_VERSION=1.99.0
+ARG RUST_VERSION=1.99.1
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
         bash -s -- -y --default-toolchain ${RUST_VERSION} --profile minimal -c rustfmt,clippy
 
